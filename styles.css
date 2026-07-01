@@ -1,0 +1,354 @@
+@import url('https://fonts.cdnfonts.com/css/perfect-dos-vga-437');
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+  background: #000;
+  color: #fff;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.award-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+}
+
+.award-man {
+  height: 80px;
+  width: auto;
+}
+
+.award-text {
+  font-size: 1.3rem;
+  line-height: 1.7;
+}
+
+#crt-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#static-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 1;
+}
+
+.boot-screen {
+  position: relative;
+  height: 100%;
+  background: #000;
+  padding: 3rem 4rem 5rem 4rem;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.energy-star {
+  position: absolute;
+  top: 3rem;
+  right: 4rem;
+  bottom: auto;
+  width: 250px;
+  opacity: 0.75;
+}
+
+
+.del-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #0000aa;
+  color: #fff;
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+  font-size: 1.1rem;
+  padding: 2rem 3rem;
+  border: 2px solid #fff;
+  text-align: center;
+  z-index: 50;
+  line-height: 2;
+}
+
+.dad-joke {
+  color: #ffff00;
+  margin: 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.del-close {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+#skip-btn {
+  position: absolute;
+  bottom: 5rem;
+  right: 4rem;
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #aaa;
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+  font-size: 1rem;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  z-index: 5;
+}
+
+#skip-btn:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+.bios-footer {
+  position: absolute;
+  bottom: 2rem;
+  left: 4rem;
+  right: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+  font-size: 1.15rem;
+  color: #aaa;
+  line-height: 1.5;
+}
+
+.bios-footer > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+#boot-lines div {
+  min-height: 1.7rem;
+}
+
+#boot-lines {
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: #d0d0d0;
+  white-space: pre;
+  overflow-y: hidden;
+  max-height: calc(65vh - 8rem);
+}
+
+.cursor {
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+  color: #d0d0d0;
+  font-size: 1.4rem;
+  animation: blink 0.8s step-start infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.desktop {
+  height: 100vh;
+  background: linear-gradient(135deg, #0f5da8 0%, #5cb8ff 100%);
+  position: relative;
+  transition: opacity 0.5s ease;
+}
+
+.desktop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.desktop-icons {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.icon {
+  width: 90px;
+  text-align: center;
+  color: #fff;
+  font-size: 0.9rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.user {
+  border-radius: 50% 50% 0 0;
+  background: rgba(255,255,255,0.25);
+}
+
+.secondary-window {
+  top: 20%;
+  left: 55%;
+  transform: none;
+}
+
+.desktop * {
+  user-select: none;
+}
+
+.window-content {
+  padding: 1rem 1.2rem;
+}
+
+.icon-graphic {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 0.4rem;
+  border: 2px solid rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.15);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.2);
+}
+
+.folder {
+  clip-path: polygon(0 20%, 32% 20%, 40% 8%, 100% 8%, 100% 92%, 0 92%);
+}
+
+.computer {
+  border-radius: 6px;
+}
+
+.internet {
+  border-radius: 50%;
+}
+
+.window {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90vw, 520px);
+  background: #ece9d8;
+  color: #000;
+  border: 2px solid #3b3b3b;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.window-content {
+  padding: 1rem 1.2rem;
+  overflow: auto;
+}
+
+.window-titlebar {
+  background: linear-gradient(90deg, #0a4ea1 0%, #2f77d0 100%);
+  color: #fff;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.window-titlebar button, .window-titlebar .min-btn {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.3rem;
+}
+
+.welcome-inner {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.welcome-ascii {
+  font-size: 0.3rem;
+  line-height: 1.2;
+  color: #333;
+  margin: 0;
+  white-space: pre;
+  flex-shrink: 0;
+  padding: 1.2rem;
+}
+
+.window-content h1 {
+  margin-top: 0;
+  font-size: 1.4rem;
+}
+
+.taskbar-tabs {
+  display: flex;
+  gap: 0.3rem;
+  flex: 1;
+  margin: 0 0.5rem;
+  overflow: hidden;
+}
+
+.taskbar-tab {
+  background: linear-gradient(180deg, #3a9fd6 0%, #1b6fa8 100%);
+  color: #fff;
+  border: 1px solid #0a4ea1;
+  border-radius: 3px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskbar-tab:hover {
+  background: linear-gradient(180deg, #5ab4e8 0%, #2a7fc0 100%);
+}
+
+.taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 42px;
+  background: linear-gradient(180deg, #1b8fdd 0%, #0f5da8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.8rem;
+}
+
+.start-btn {
+  background: linear-gradient(180deg, #2d9a4f 0%, #1f7a38 100%);
+  color: #fff;
+  border: 2px solid #1e5e2f;
+  border-radius: 12px;
+  padding: 0.2rem 0.9rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.taskbar-right {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.25rem 0.6rem;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: #fff;
+}
