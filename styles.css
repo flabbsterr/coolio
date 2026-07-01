@@ -264,11 +264,6 @@ body {
   overflow: auto;
 }
 
-.window-content {
-  padding: 1rem 1.2rem;
-  overflow: auto;
-}
-
 .window-titlebar button, .window-titlebar .min-btn {
   border: none;
   background: transparent;
@@ -542,7 +537,7 @@ body {
   background: #f5f5f5;
 }
 
-
+.game-btn {
   background: linear-gradient(180deg, #3a9fd6 0%, #1b6fa8 100%);
   color: #fff;
   border: 1px solid #0a4ea1;
@@ -557,7 +552,7 @@ body {
   background: linear-gradient(180deg, #5ab4e8 0%, #2a7fc0 100%);
 }
 
-
+.taskbar-right {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.25rem 0.6rem;
   border-radius: 3px;

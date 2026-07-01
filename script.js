@@ -502,7 +502,7 @@ const lines = [
 const dadJokes = [
   "Why don't scientists trust atoms? Because they make up everything.",
   "Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them.",
-  "Someone said he was hungry, I said 'Hi Hungry, I'm Flabbsterr!' and said who are you, how did you get in my house?",
+  "Someone said he was hungry, I said 'Hi Hungry, I'm Flabbsterr!', then they said who are you, how did you get in my house? I Dunno, I was just trying to make a joke.",
   "Someone lost their lost their arm in an accident, I asked if they're alright, they said they're all left! Was that how the joke went? I don't know, I wasn't there.",
   "I got a joke, uhhhhhhh uhhhhhhhhhhhhhhhhh i forgot sorry",
   "Did you hear the cheese factory that exploded? There was nothing left but de-brie.",
@@ -510,8 +510,9 @@ const dadJokes = [
   "Why did the bicycle fall over? Because it was two-tired.",
   "I told my wife she was drawing her eyebrows too high. She looked surprised.",
   "Why did the tomato turn red? Because it saw the salad dressing.",
-  "I would tell you a construction joke, but I'm still working on it.",
-  "Where does Darth Vader shop to get his clothes? At the Darth Maul.",
+  "I would tell you a construction joke, but I'm still working on it. Its gonna be finished when rell seas drops.",
+  "Where does Darth Vader shop to get his sneakers? At the Darth Maul.",
+  "Where does Darth Maul shoes to get his shoes? At the Darth Vader. what?",
   "Ridwan told me to make a joke about his name, but I don't think it would be very Ridwan-iculous.",
 ];
 
