@@ -119,7 +119,7 @@ function removeTaskbarTab(id) {
 
 // Wallpapers
 const wallpapers = [
-  'assets/wallpapers/exploding cat.jpg',
+  'assets/wallpapers/exploding-cat.jpg',
   'assets/wallpapers/pixelated.png',
   'assets/wallpapers/xp.jpeg',
 ];
