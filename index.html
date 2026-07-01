@@ -177,21 +177,33 @@
         </div>
       </div>
 
-      <div id="internet-window" class="window secondary-window" style="display:none;top:10%;left:30%;width:400px;">
+      <div id="internet-window" class="window secondary-window" style="display:none;top:5%;left:15%;width:600px;">
         <div class="window-titlebar">
           <span>Internet</span>
           <button onclick="closeWindow('internet-window')">x</button>
         </div>
-        <div class="window-content" id="internet-content">
-          <div id="game-picker" style="display:flex;flex-direction:column;gap:0.5rem;">
-            <div style="font-weight:bold;margin-bottom:0.3rem;">Choose a game:</div>
-            <button class="game-btn" onclick="loadGame('snake')">Snake</button>
-            <button class="game-btn" onclick="loadGame('pong')">Pong</button>
+        <div class="window-content" id="internet-content" style="padding:0;">
+          <div id="game-picker" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;background:#ece9d8;padding:2rem;">
+            <div style="font-size:2.2rem;font-weight:bold;letter-spacing:0.1em;margin-bottom:0.2rem;color:#333;">FLABB<span style="color:#0a4ea1;">NET</span></div>
+            <div style="font-size:0.7rem;color:#888;margin-bottom:2.5rem;">Your Internet Homepage</div>
+            <div style="display:flex;gap:2rem;">
+              <div class="game-tile" onclick="loadGame('snake')">
+                <div class="game-tile-icon" style="background:#111;color:#0f0;font-size:2rem;font-family:monospace;">&#9632;</div>
+                <div class="game-tile-label">Snake</div>
+              </div>
+              <div class="game-tile" onclick="loadGame('pong')">
+                <div class="game-tile-icon" style="background:#111;color:#fff;font-size:2rem;font-family:monospace;">&#9646;</div>
+                <div class="game-tile-label">Pong</div>
+              </div>
+            </div>
           </div>
-          <div id="game-area" style="display:none;">
-            <button onclick="backToGames()" style="margin-bottom:0.5rem;font-size:0.75rem;cursor:pointer;">← Back</button>
-            <canvas id="game-canvas" style="display:block;background:#000;border:1px solid #555;width:100%;height:auto;"></canvas>
-            <div id="game-msg" style="font-size:0.8rem;color:#555;margin-top:0.3rem;text-align:center;"></div>
+          <div id="game-area" style="display:none;flex-direction:column;">
+            <div style="background:#ddd;padding:0.3rem 0.6rem;display:flex;align-items:center;gap:0.6rem;border-bottom:1px solid #bbb;">
+              <button onclick="backToGames()" style="cursor:pointer;font-size:0.75rem;padding:0.15rem 0.5rem;">&#8592; Home</button>
+              <span id="game-title" style="font-size:0.8rem;color:#555;"></span>
+            </div>
+            <canvas id="game-canvas" style="display:block;background:#000;width:100%;height:auto;"></canvas>
+            <div id="game-msg" style="font-size:0.8rem;color:#555;padding:0.3rem 0.6rem;background:#e8e8e8;border-top:1px solid #ccc;text-align:center;"></div>
           </div>
         </div>
       </div>

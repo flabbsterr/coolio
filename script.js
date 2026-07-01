@@ -330,6 +330,8 @@ function loadGame(name) {
   }
 
   resizeAndStart();
+  document.getElementById('game-title').textContent = name === 'snake' ? 'Snake' : 'Pong';
+  document.getElementById('game-area').style.display = 'flex';
   gameResizeObserver = new ResizeObserver(resizeAndStart);
   gameResizeObserver.observe(canvas);
 }
@@ -346,10 +348,10 @@ function startSnake(canvas, ctx) {
   }
 
   function onKey(e) {
-    if (e.key==='ArrowUp' && dir.y===0) next={x:0,y:-1};
-    if (e.key==='ArrowDown' && dir.y===0) next={x:0,y:1};
-    if (e.key==='ArrowLeft' && dir.x===0) next={x:-1,y:0};
-    if (e.key==='ArrowRight' && dir.x===0) next={x:1,y:0};
+    if ((e.key==='ArrowUp'||e.key==='w') && dir.y===0) next={x:0,y:-1};
+    if ((e.key==='ArrowDown'||e.key==='s') && dir.y===0) next={x:0,y:1};
+    if ((e.key==='ArrowLeft'||e.key==='a') && dir.x===0) next={x:-1,y:0};
+    if ((e.key==='ArrowRight'||e.key==='d') && dir.x===0) next={x:1,y:0};
     e.preventDefault();
   }
   document.addEventListener('keydown', onKey);
@@ -395,9 +397,9 @@ function startPong(canvas, ctx) {
   let ball={x:W/2,y:H/2,vx:2,vy:1.5};
   let s1=0, s2=0;
   const keys={};
-  document.getElementById('game-msg').textContent = 'W/S to move  |  Right paddle is AI';
+  document.getElementById('game-msg').textContent = 'W/S or arrows to move  |  Right paddle is AI';
 
-  function onKey(e) { keys[e.key]=e.type==='keydown'; if(['w','s','ArrowUp','ArrowDown'].includes(e.key)) e.preventDefault(); }
+  function onKey(e) { keys[e.key]=e.type==='keydown'; if(['w','s','a','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault(); }
   document.addEventListener('keydown', onKey);
   document.addEventListener('keyup', onKey);
 
@@ -406,8 +408,8 @@ function startPong(canvas, ctx) {
     gameLoop = requestAnimationFrame(tick);
     if (ts - last < 1000/60) return;
     last = ts;
-    if(keys['w']) p1.y=Math.max(0,p1.y-4);
-    if(keys['s']) p1.y=Math.min(H-PAD.h,p1.y+4);
+    if(keys['w']||keys['ArrowUp']) p1.y=Math.max(0,p1.y-4);
+    if(keys['s']||keys['ArrowDown']) p1.y=Math.min(H-PAD.h,p1.y+4);
     const aiCenter = p2.y + PAD.h/2;
     const aiSpeed = 2.5;
     if (aiCenter < ball.y - 4) p2.y = Math.min(H-PAD.h, p2.y+aiSpeed);
