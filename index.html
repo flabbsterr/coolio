@@ -38,15 +38,11 @@
 
     <div id="desktop" class="desktop hidden">
       <div class="desktop-icons">
-        <div class="icon">
-          <div class="icon-graphic folder"></div>
-          <span>My Documents</span>
-        </div>
-        <div class="icon">
+        <div class="icon" onclick="openWindow('computer-window')">
           <div class="icon-graphic computer"></div>
           <span>My Computer</span>
         </div>
-        <div class="icon">
+        <div class="icon" onclick="openWindow('internet-window')">
           <div class="icon-graphic internet"></div>
           <span>Internet</span>
         </div>
@@ -74,7 +70,6 @@
             <div>
               <h1>Welcome to your retro desktop</h1>
               <p>Your machine has finished booting.</p>
-              <p>Click the Start button to begin your journey.</p>
             </div>
             <pre class="welcome-ascii">         __
         / /\
@@ -114,7 +109,7 @@
           <button onclick="closeWindow('projects-window')">x</button>
         </div>
         <div class="window-content">
-          <p style="color:#888;font-style:italic;">No projects yet — check back soon!</p>
+          <p>This lol</p>
         </div>
       </div>
 
@@ -125,7 +120,7 @@
         </div>
         <div class="window-content" style="font-family: 'Comic Sans MS', cursive; font-size: 0.85rem; color: #000; max-height: 60vh; overflow-y: auto;">
           <div style="text-align:center; border-bottom: 2px solid #333; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-            <div style="font-size:1.3rem; font-weight:bold; color:#c00;">[ H4YD3N'S PAGE ]</div>
+            <div style="font-size:1.3rem; font-weight:bold; color:#c00;">[ FLABBSTERR'S PAGE ]</div>
             <div style="font-size:0.7rem; color:#888;">Best viewed in Internet Explorer 6.0 at 800x600</div>
           </div>
           <div style="text-align:center; margin-bottom:0.5rem;">
@@ -133,11 +128,11 @@
           </div>
           <div style="margin-bottom:0.5rem;">
             <b style="color:#c00;">:: About Me ::</b><br>
-            A 19 year ol
+            A 19 year old apprentenceship student from the UK. Please do shoot me a message if you have any questions or want to collab on a project!
           </div>
           <div style="margin-bottom:0.5rem;">
             <b style="color:#c00;">:: Interests ::</b><br>
-            Playing games, coding (occasionally), listening to music, lore games/shows/books/whatever (anything with a deep story)
+            Playing games, coding (occasionally), listening to music, lore games/shows/books/whatever (anything with a deep story) and cats
           </div>
           <div style="margin-bottom:0.5rem;">
             <b style="color:#c00;">:: Favorite Music ::</b><br>
@@ -153,8 +148,102 @@
         </div>
       </div>
 
+      <div id="spotify-window" class="window secondary-window" style="display:none;top:10%;left:30%;width:340px;height:400px;overflow:hidden;">
+        <div class="window-titlebar">
+          <span>Spotify</span>
+          <button onclick="closeWindow('spotify-window')">x</button>
+        </div>
+        <div class="window-content" style="padding:0;flex:1;overflow:hidden;">
+          <iframe style="border-radius:0;display:block;width:100%;height:100%;" src="https://open.spotify.com/embed/playlist/2qByh7BRjevxTztgLor2EY?utm_source=generator&si=093b0817ebc5472e" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div id="computer-window" class="window secondary-window" style="display:none;top:15%;left:25%;width:340px;">
+        <div class="window-titlebar">
+          <span>My Computer</span>
+          <button onclick="closeWindow('computer-window')">x</button>
+        </div>
+        <div class="window-content" style="font-size:0.85rem;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Browser</td><td id="si-browser"></td></tr>
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Platform</td><td id="si-platform"></td></tr>
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Screen</td><td id="si-screen"></td></tr>
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Colour Depth</td><td id="si-colour"></td></tr>
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Memory</td><td id="si-memory"></td></tr>
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Cores</td><td id="si-cores"></td></tr>
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Language</td><td id="si-lang"></td></tr>
+            <tr><td style="color:#888;padding:0.3rem 0.5rem 0.3rem 0;">Online</td><td id="si-online"></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="internet-window" class="window secondary-window" style="display:none;top:10%;left:30%;width:400px;">
+        <div class="window-titlebar">
+          <span>Internet</span>
+          <button onclick="closeWindow('internet-window')">x</button>
+        </div>
+        <div class="window-content" id="internet-content">
+          <div id="game-picker" style="display:flex;flex-direction:column;gap:0.5rem;">
+            <div style="font-weight:bold;margin-bottom:0.3rem;">Choose a game:</div>
+            <button class="game-btn" onclick="loadGame('snake')">Snake</button>
+            <button class="game-btn" onclick="loadGame('pong')">Pong</button>
+          </div>
+          <div id="game-area" style="display:none;">
+            <button onclick="backToGames()" style="margin-bottom:0.5rem;font-size:0.75rem;cursor:pointer;">← Back</button>
+            <canvas id="game-canvas" style="display:block;background:#000;border:1px solid #555;width:100%;height:auto;"></canvas>
+            <div id="game-msg" style="font-size:0.8rem;color:#555;margin-top:0.3rem;text-align:center;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="clock-popup" style="display:none;" onclick="event.stopPropagation()">
+        <div class="clock-popup-time" id="clock-popup-time">12:00:00 AM</div>
+        <div class="clock-popup-date" id="clock-popup-date">Monday, January 1, 2026</div>
+      </div>
+
+      <div id="start-menu" style="display:none;" onclick="event.stopPropagation()">
+        <div class="start-menu-banner">
+          <div class="start-menu-avatar"></div>
+          <span>FLABBSTERR</span>
+        </div>
+        <div class="start-menu-body">
+          <div class="start-menu-left">
+            <div class="start-menu-item" onclick="openWindow('welcome-window');toggleStartMenu()">
+              <div class="start-menu-icon computer"></div>
+              <span>Welcome</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('user-window');toggleStartMenu()">
+              <div class="start-menu-icon user"></div>
+              <span>My Page</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('projects-window');toggleStartMenu()">
+              <div class="start-menu-icon folder"></div>
+              <span>Projects</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('wallpaper-window');toggleStartMenu()">
+              <div class="start-menu-icon computer"></div>
+              <span>Wallpaper</span>
+            </div>
+          </div>
+          <div class="start-menu-divider"></div>
+          <div class="start-menu-right">
+            <a class="start-menu-item" href="https://github.com/flabbsterr" target="_blank" onclick="toggleStartMenu()">
+              <div class="start-menu-icon internet"></div>
+              <span>My GitHub</span>
+            </a>
+            <div class="start-menu-item" onclick="openWindow('spotify-window');toggleStartMenu()">
+              <div class="start-menu-icon internet"></div>
+              <span>My Playlist</span>
+            </div>
+          </div>
+        </div>
+        <div class="start-menu-footer">
+          <button class="start-menu-shutdown" onclick="triggerShutdown()">⏻ Shut Down</button>
+        </div>
+      </div>
+
       <div class="taskbar">
-        <button class="start-btn">⊞ start</button>
+        <button class="start-btn" onclick="toggleStartMenu()">⊞ menu</button>
         <div id="taskbar-tabs" class="taskbar-tabs"></div>
         <div class="taskbar-right">
           <span>🔊</span>
