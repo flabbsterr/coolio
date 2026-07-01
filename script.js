@@ -77,8 +77,14 @@ function makeDraggable(el, handle, snap) {
         el.style.left = Math.max(0, Math.min(e.clientX - offX, maxLeft)) + 'px';
         el.style.top = Math.max(0, Math.min(e.clientY - offY, maxTop)) + 'px';
       } else {
-        el.style.left = (e.clientX - offX) + 'px';
-        el.style.top = (e.clientY - offY) + 'px';
+        const desktop = document.getElementById('desktop');
+        const taskbarH = 42;
+        const titlebarH = 32;
+        const minVisible = 60;
+        const newLeft = e.clientX - offX;
+        const newTop = e.clientY - offY;
+        el.style.left = Math.max(-(el.offsetWidth - minVisible), Math.min(newLeft, desktop.offsetWidth - minVisible)) + 'px';
+        el.style.top = Math.max(0, Math.min(newTop, desktop.offsetHeight - taskbarH - titlebarH)) + 'px';
       }
       el.style.transform = 'none';
     }
@@ -502,7 +508,7 @@ const lines = [
 const dadJokes = [
   "Why don't scientists trust atoms? Because they make up everything.",
   "Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them.",
-  "Someone said he was hungry, I said 'Hi Hungry, I'm Flabbsterr!', then they said who are you, how did you get in my house? I Dunno, I was just trying to make a joke.",
+  "Someone said he was hungry, I said 'Hi Hungry, I'm Flabbsterr!', and then they said who are you, how did you get in my house? I Dunno, I was just trying to make a joke.",
   "Someone lost their lost their arm in an accident, I asked if they're alright, they said they're all left! Was that how the joke went? I don't know, I wasn't there.",
   "I got a joke, uhhhhhhh uhhhhhhhhhhhhhhhhh i forgot sorry",
   "Did you hear the cheese factory that exploded? There was nothing left but de-brie.",
