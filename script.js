@@ -320,8 +320,9 @@ function loadGame(name) {
   if (gameResizeObserver) { gameResizeObserver.disconnect(); gameResizeObserver = null; }
 
   function resizeAndStart() {
-    canvas.width = canvas.offsetWidth;
-    canvas.height = Math.round(canvas.offsetWidth * (280/360));
+    const area = document.getElementById('game-area');
+    canvas.width = canvas.offsetWidth || area.offsetWidth;
+    canvas.height = Math.round(canvas.width * (280/360));
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
     if (window._pongCleanup) { window._pongCleanup(); window._pongCleanup = null; }
@@ -332,8 +333,8 @@ function loadGame(name) {
   resizeAndStart();
   document.getElementById('game-title').textContent = name === 'snake' ? 'Snake' : 'Pong';
   document.getElementById('game-area').style.display = 'flex';
-  gameResizeObserver = new ResizeObserver(resizeAndStart);
-  gameResizeObserver.observe(canvas);
+  gameResizeObserver = new ResizeObserver(() => resizeAndStart());
+  gameResizeObserver.observe(document.getElementById('internet-window'));
 }
 
 function startSnake(canvas, ctx) {
@@ -341,7 +342,7 @@ function startSnake(canvas, ctx) {
   let snake = [{x:5,y:5}], dir = {x:1,y:0}, next = {x:1,y:0};
   let food = randomFood();
   let score = 0, dead = false;
-  document.getElementById('game-msg').textContent = 'Arrow keys to move';
+  document.getElementById('game-msg').textContent = 'WASD or arrows to move';
 
   function randomFood() {
     return { x: Math.floor(Math.random()*(W/S)), y: Math.floor(Math.random()*(H/S)) };
