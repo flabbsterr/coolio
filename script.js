@@ -492,7 +492,7 @@ const lines = [
   'Boot from CD/DVD : Fail',
   'Boot from Hard Disk...',
   '',
-  'Microsoft Windows XP',
+  'NOT Microsoft Windows XP',
   'Loading system files...',
   'Initializing drivers...',
   'Starting Windows...',
@@ -580,7 +580,7 @@ function printNextLine() {
   }
   const div = document.createElement('div');
   div.textContent = lines[lineIndex];
-  if (lines[lineIndex] === 'Microsoft Windows XP') div.style.color = '#00aa00';
+  if (lines[lineIndex] === 'NOT Microsoft Windows XP') div.style.color = '#00aa00';
   if (lines[lineIndex].startsWith('░') || lines[lineIndex].startsWith('\n░')) {
     const ascii = document.createElement('pre');
     ascii.style.cssText = 'position:absolute;right:4rem;top:50%;transform:translateY(-50%);font-size:0.85rem;line-height:1.2;color:#aaa;margin:0;white-space:pre';
