@@ -47,6 +47,96 @@ function findFreeCell(preferredLeft, preferredTop, excludeEl) {
   return { left: preferredLeft + 'px', top: preferredTop + 'px' };
 }
 
+// ── Achievements ──────────────────────────────────────────────
+const ACHIEVEMENTS = [
+  {
+    id: 'hidden_page',
+    icon: '👀',
+    title: "You're not my DADD",
+    hint: 'Find the hidden menu on the loading start-up screen',
+    secret: true
+  },
+  {
+    id: 'pong_losses',
+    icon: '🏓',
+    title: 'Insane Skill Issue',
+    hint: 'Be bad at pong.',
+    secret: false
+  },
+  {
+    id: 'bin_crash',
+    icon: '🗑️',
+    title: "how'd you do that kaspian?",
+    hint: 'Maybe the real trash was the computer all along.',
+    secret: true
+  },
+  {
+    id: 'snake_resize',
+    icon: '🐍',
+    title: 'Cyberpsycho',
+    hint: 'It’s not a bug, it’s a feature. Just a buggy resize feature.',
+    secret: true
+  },
+  {
+    id: 'cat_nose',
+    icon: '🐱',
+    title: 'oo iaa ooi iaaa',
+    hint: 'do not touch the cat nose 100 times',
+    secret: false
+  }
+];
+
+function getAchievements() {
+  return JSON.parse(localStorage.getItem('achievements') || '{}');
+}
+
+window.resetAchievements = function() {
+  localStorage.removeItem('achievements');
+  localStorage.removeItem('pongLosses');
+  localStorage.removeItem('catNoseCount');
+  console.log('Achievements reset.');
+};
+
+function unlockAchievement(id) {
+  const data = getAchievements();
+  if (data[id]) return;
+  data[id] = Date.now();
+  localStorage.setItem('achievements', JSON.stringify(data));
+  const a = ACHIEVEMENTS.find(x => x.id === id);
+  if (a) showAchievementToast(a);
+  if (document.getElementById('achievements-window').style.display !== 'none') renderAchievements();
+}
+
+function showAchievementToast(a) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-100%);background:#000080;color:#fff;border:3px solid #fff;border-top:none;padding:0.8rem 1.4rem;font-size:0.95rem;z-index:9999999;border-radius:0;min-width:320px;box-shadow:inset 1px 1px 0 #aaaaff, inset -1px -1px 0 #000033, 4px 4px 0 #000;transition:transform 0.4s ease;font-family:"Perfect DOS VGA 437","Courier New",monospace;';
+  toast.innerHTML = `<div style="background:linear-gradient(90deg,#000080,#1084d0);color:#fff;font-weight:bold;margin:-0.8rem -1.4rem 0.6rem;padding:0.3rem 0.6rem;font-size:0.85rem;border-bottom:2px solid #fff;letter-spacing:0.05em;">Achievement Unlocked!</div><div style="font-size:1rem;letter-spacing:0.03em;">${a.title}</div>`;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      toast.style.transform = 'translateX(-50%) translateY(12px)';
+      setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(-100%)';
+        setTimeout(() => toast.remove(), 400);
+      }, 3200);
+    });
+  });
+}
+
+function renderAchievements() {
+  const data = getAchievements();
+  const list = document.getElementById('achievements-list');
+  if (!list) return;
+  list.innerHTML = '';
+  ACHIEVEMENTS.forEach(a => {
+    const unlocked = !!data[a.id];
+    const div = document.createElement('div');
+    div.className = 'achievement' + (unlocked ? '' : ' locked');
+    div.innerHTML = `<div class="achievement-icon">${unlocked ? '<div style="width:32px;height:32px;"></div>' : '<img src="assets/icons/lockedAchivement.png" style="width:32px;height:32px;image-rendering:pixelated;">'}</div><div><div class="achievement-title">${unlocked ? a.title : '???'}</div><div class="achievement-desc">${unlocked ? a.hint : a.hint}</div></div>`;
+    list.appendChild(div);
+  });
+}
+
 let topZ = 10;
 
 function bringToFront(el) {
@@ -55,12 +145,15 @@ function bringToFront(el) {
 }
 
 function makeDraggable(el, handle, snap) {
+  if (isMobile) return;
   handle = handle || el;
   handle.style.cursor = 'grab';
   handle.addEventListener('mousedown', function(e) {
     if (e.target.tagName === 'BUTTON') return;
     e.preventDefault();
     if (!snap) bringToFront(el);
+
+    window._draggingEl = el;
     const rect = el.getBoundingClientRect();
     const offX = e.clientX - rect.left;
     const offY = e.clientY - rect.top;
@@ -89,29 +182,100 @@ function makeDraggable(el, handle, snap) {
       el.style.transform = 'none';
     }
     function onUp(e) {
+      handle.style.cursor = 'grab';
+      document.body.style.userSelect = '';
+      window._lastDraggedEl = el;
+      window._draggingEl = null;
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
       if (snap) {
+        const bin = document.getElementById('bin-icon');
+        const binRect = bin.getBoundingClientRect();
+        const overBin = e.clientX >= binRect.left && e.clientX <= binRect.right &&
+                        e.clientY >= binRect.top  && e.clientY <= binRect.bottom;
+        if (overBin && el !== bin) {
+          bin.classList.remove('bin-drop-active');
+          if (el.querySelector('.icon-graphic.computer')) {
+            unlockAchievement('bin_crash');
+            triggerBSOD();
+          } else {
+            el.remove();
+          }
+          return;
+        }
         const snappedLeft = snapToGrid(e.clientX - offX);
         const snappedTop = snapToGrid(e.clientY - offY);
         const cell = findFreeCell(snappedLeft, snappedTop, el);
         el.style.left = cell.left;
         el.style.top = cell.top;
       }
-      handle.style.cursor = 'grab';
-      document.body.style.userSelect = '';
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
     }
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   });
 }
 
+const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+const hourglassEl = document.getElementById('hourglass-cursor');
+const mouseCursorEl = document.getElementById('mouse-cursor');
+
+if (!isMobile) {
+document.addEventListener('mousemove', e => {
+  hourglassEl.style.left = e.clientX + 'px';
+  hourglassEl.style.top = e.clientY + 'px';
+  mouseCursorEl.style.left = e.clientX + 'px';
+  mouseCursorEl.style.top = e.clientY + 'px';
+
+  const t = e.target;
+  const isGrab = t.closest('.window-titlebar') || t.closest('.icon');
+  const isText = ['INPUT','TEXTAREA'].includes(t.tagName) || t.closest('.window-content');
+  const isClickable = t.tagName === 'BUTTON' || t.tagName === 'A' || t.closest('.game-tile') || t.closest('.start-menu-item') || t.closest('.taskbar-tab');
+
+  if (isGrab) {
+    mouseCursorEl.style.transform = 'rotate(-20deg)';
+  } else if (isText) {
+    mouseCursorEl.style.transform = 'rotate(0deg)';
+    mouseCursorEl.style.filter = 'brightness(1.5)';
+  } else if (isClickable) {
+    mouseCursorEl.style.transform = 'scale(0.85)';
+    mouseCursorEl.style.filter = 'none';
+  } else {
+    mouseCursorEl.style.transform = 'none';
+    mouseCursorEl.style.filter = 'none';
+  }
+});
+
+document.addEventListener('mousedown', () => {
+  mouseCursorEl.style.transform = 'scale(0.8)';
+});
+document.addEventListener('mouseup', () => {
+  mouseCursorEl.style.transform = 'none';
+});
+} // end !isMobile
+
+function showHourglass() {
+  document.body.classList.add('cursor-wait');
+  hourglassEl.style.display = 'block';
+  setTimeout(() => {
+    document.body.classList.remove('cursor-wait');
+    hourglassEl.style.display = 'none';
+  }, 500);
+}
+
 function openWindow(id) {
+  showHourglass();
   const w = document.getElementById(id);
   w.style.display = id === 'spotify-window' ? 'flex' : 'block';
   bringToFront(w);
   removeTaskbarTab(id);
   if (id === 'computer-window') populateSysInfo();
+  if (id === 'achievements-window') renderAchievements();
+  if (id === 'notepad-window') {
+    const ta = document.getElementById('notepad-text');
+    ta.value = localStorage.getItem('notepad') || '';
+    ta.oninput = () => localStorage.setItem('notepad', ta.value);
+  }
 }
 
 function closeWindow(id) {
@@ -160,7 +324,39 @@ function applyWallpaper(src) {
     d.style.backgroundImage = '';
   }
   localStorage.setItem('wallpaper', src || '');
+  const nose = document.getElementById('cat-nose');
+  if (src && src.includes('exploding-cat')) {
+    nose.style.display = 'block';
+    positionCatNose();
+  } else {
+    nose.style.display = 'none';
+  }
 }
+
+function positionCatNose() {
+  const d = document.getElementById('desktop');
+  const nose = document.getElementById('cat-nose');
+  nose.style.left = Math.round(d.offsetWidth * 0.520) + 'px';
+  nose.style.top  = Math.round(d.offsetHeight * 0.775) + 'px';
+  nose.style.width = Math.round(d.offsetWidth * 0.055) + 'px';
+  nose.style.height = Math.round(d.offsetHeight * 0.055) + 'px';
+}
+
+let catNoseCount = parseInt(localStorage.getItem('catNoseCount') || '0');
+document.getElementById('cat-nose').addEventListener('click', () => {
+  catNoseCount++;
+  localStorage.setItem('catNoseCount', catNoseCount);
+  if (catNoseCount >= 100) {
+    unlockAchievement('cat_nose');
+    new Audio('assets/mp3/oooaiiaa.m4a').play();
+  } else {
+    new Audio('assets/mp3/noseBoop.mp3').play();
+  }
+});
+window.addEventListener('resize', () => {
+  const nose = document.getElementById('cat-nose');
+  if (nose.style.display !== 'none') positionCatNose();
+});
 
 function initWallpapers() {
   const list = document.getElementById('wallpaper-list');
@@ -339,7 +535,12 @@ function loadGame(name) {
   resizeAndStart();
   document.getElementById('game-title').textContent = name === 'snake' ? 'Snake' : 'Pong';
   document.getElementById('game-area').style.display = 'flex';
-  gameResizeObserver = new ResizeObserver(() => resizeAndStart());
+  let snakeResizeReady = false;
+  setTimeout(() => { snakeResizeReady = true; }, 500);
+  gameResizeObserver = new ResizeObserver(() => {
+    resizeAndStart();
+    if (name === 'snake' && snakeResizeReady) unlockAchievement('snake_resize');
+  });
   gameResizeObserver.observe(document.getElementById('internet-window'));
 }
 
@@ -398,10 +599,10 @@ function startSnake(canvas, ctx) {
 }
 
 function startPong(canvas, ctx) {
-  const W = canvas.width, H = canvas.height;
+  let pongLosses = parseInt(localStorage.getItem('pongLosses') || '0');
   const PAD = {w:8,h:50};
-  let p1={y:H/2-25}, p2={y:H/2-25};
-  let ball={x:W/2,y:H/2,vx:2,vy:1.5};
+  let p1={y:canvas.height/2-25}, p2={y:canvas.height/2-25};
+  let ball={x:canvas.width/2,y:canvas.height/2,vx:2,vy:1.5};
   let s1=0, s2=0;
   const keys={};
   document.getElementById('game-msg').textContent = 'W/S or arrows to move  |  Right paddle is AI';
@@ -412,6 +613,7 @@ function startPong(canvas, ctx) {
 
   let last = 0;
   function tick(ts) {
+    const W = canvas.width, H = canvas.height;
     gameLoop = requestAnimationFrame(tick);
     if (ts - last < 1000/60) return;
     last = ts;
@@ -425,8 +627,8 @@ function startPong(canvas, ctx) {
     if(ball.y<=0||ball.y>=H) ball.vy*=-1;
     if(ball.x<=16&&ball.y>=p1.y&&ball.y<=p1.y+PAD.h) { ball.vx=Math.abs(ball.vx)*1.05; }
     if(ball.x>=W-16&&ball.y>=p2.y&&ball.y<=p2.y+PAD.h) { ball.vx=-Math.abs(ball.vx)*1.05; }
-    if(ball.x<0){s2++;reset();}
-    if(ball.x>W){s1++;reset();}
+    if(ball.x<0){s2++;reset(W,H); pongLosses++; localStorage.setItem('pongLosses',pongLosses); if(pongLosses>=10) unlockAchievement('pong_losses');}
+    if(ball.x>W){s1++;reset(W,H);}
     ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
     ctx.fillStyle='#fff';
     ctx.fillRect(8,p1.y,PAD.w,PAD.h);
@@ -438,14 +640,64 @@ function startPong(canvas, ctx) {
     ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();
     ctx.setLineDash([]);
   }
-  function reset(){ball={x:W/2,y:H/2,vx:ball.vx>0?-2:2,vy:1.5};}
+  function reset(W,H){ball={x:W/2,y:H/2,vx:ball.vx>0?-2:2,vy:1.5};}
 
-  const origBack = backToGames;
   window._pongCleanup = () => { document.removeEventListener('keydown',onKey); document.removeEventListener('keyup',onKey); };
   gameLoop = requestAnimationFrame(tick);
 }
 
-// Scanline overlay
+function initBin() {
+  const bin = document.getElementById('bin-icon');
+  makeDraggable(bin, bin, true);
+
+  bin.addEventListener('dblclick', () => {
+    const remaining = document.querySelectorAll('.icon:not(#bin-icon)');
+    if (remaining.length === 0) {
+      unlockAchievement('bin_crash');
+      triggerBSOD();
+    }
+  });
+
+  document.addEventListener('mouseup', function(e) {
+    const dragged = window._lastDraggedEl;
+    const binRect = bin.getBoundingClientRect();
+    const overBin = e.clientX >= binRect.left && e.clientX <= binRect.right &&
+                    e.clientY >= binRect.top  && e.clientY <= binRect.bottom;
+    bin.classList.remove('bin-drop-active');
+    if (!overBin || !dragged) return;
+    if (dragged.classList.contains('icon') && dragged !== bin) {
+      dragged.remove();
+    }
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!window._draggingEl) return;
+    const binRect = bin.getBoundingClientRect();
+    const overBin = e.clientX >= binRect.left && e.clientX <= binRect.right &&
+                    e.clientY >= binRect.top  && e.clientY <= binRect.bottom;
+    if (overBin && window._draggingEl !== bin) bin.classList.add('bin-drop-active');
+    else bin.classList.remove('bin-drop-active');
+  });
+}
+
+function triggerBSOD() {
+  const bsod = document.createElement('div');
+  bsod.style.cssText = 'position:fixed;inset:0;background:#0000aa;color:#fff;font-family:"Perfect DOS VGA 437","Courier New",monospace;font-size:1rem;z-index:999999;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:4rem;line-height:2;';
+  bsod.innerHTML = `
+    <div style="font-size:1.1rem;margin-bottom:2rem;">A problem has been detected and FLABBSTERR OS has been shut down to prevent damage to your computer.</div>
+    <div style="color:#fff;margin-bottom:2rem;">BIN_IN_BIN_EXCEPTION</div>
+    <div style="font-size:0.85rem;color:#aaa;">If this is the first time you've seen this Stop error screen, refresh the page. If this screen appears again, follow these steps:</div>
+    <div style="font-size:0.85rem;margin-top:1rem;">Do not put the PC in the bin. Why did you even do that?</div>
+    <div style="margin-top:3rem;font-size:0.85rem;">Technical information:</div>
+    <div style="font-size:0.85rem;">*** STOP: 0x000000BIN (0xB1N0000, 0x00B1N000, 0x0000B1N0, 0x00000B1N)</div>
+    <div style="margin-top:3rem;font-size:0.8rem;color:#aaa;">Press any key to restart</div>
+  `;
+  document.body.appendChild(bsod);
+  document.addEventListener('keydown', () => location.reload(), { once: true });
+  bsod.addEventListener('click', () => location.reload(), { once: true });
+}
+
+// ── Scanline overlay
 const canvas = document.getElementById('static-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -527,8 +779,9 @@ document.addEventListener('keydown', function onDel(e) {
   if (e.key === 'Delete' && popup.style.display === 'none') {
     document.getElementById('dad-joke').textContent = dadJokes[Math.floor(Math.random() * dadJokes.length)];
     popup.style.display = 'block';
+    unlockAchievement('hidden_page');
     document.addEventListener('keydown', function closePopup(e2) {
-      if (e2.key === 'Delete') return;
+      if (e2.key !== 'Delete') return;
       popup.style.display = 'none';
       document.removeEventListener('keydown', closePopup);
     });
@@ -552,6 +805,12 @@ function startBoot() {
   bootLines.innerHTML = '';
   document.getElementById('award-header').style.display = 'flex';
   document.getElementById('skip-btn').style.display = 'block';
+  if (isMobile) {
+    const delHint = document.getElementById('del-hint');
+    delHint.style.textDecoration = 'underline';
+    delHint.style.cursor = 'pointer';
+    delHint.addEventListener('click', () => document.dispatchEvent(new KeyboardEvent('keydown', {key:'Delete'})));
+  }
   bootScreen.removeEventListener('click', startBoot);
   document.removeEventListener('keydown', onEnter);
   beep();
@@ -580,7 +839,9 @@ function printNextLine() {
   }
   const div = document.createElement('div');
   div.textContent = lines[lineIndex];
-  if (lines[lineIndex] === 'NOT Microsoft Windows XP') div.style.color = '#00aa00';
+  if (lines[lineIndex] === 'NOT Microsoft Windows XP') {
+    div.style.color = '#00aa00';
+  }
   if (lines[lineIndex].startsWith('░') || lines[lineIndex].startsWith('\n░')) {
     const ascii = document.createElement('pre');
     ascii.style.cssText = 'position:absolute;right:4rem;top:50%;transform:translateY(-50%);font-size:0.85rem;line-height:1.2;color:#aaa;margin:0;white-space:pre';
@@ -635,6 +896,7 @@ function finish() {
   startup.play();
   setTimeout(() => {
     bootScreen.style.display = 'none';
+    if (document.getElementById('cat-nose').style.display !== 'none') positionCatNose();
     document.querySelectorAll('.window').forEach(w => {
       makeDraggable(w, w.querySelector('.window-titlebar'), false);
       // add minimize button
@@ -686,6 +948,14 @@ function finish() {
       el.style.margin = '0';
       makeDraggable(el, el, true);
     });
+    // place bin icon on desktop
+    const bin = document.getElementById('bin-icon');
+    desktop.appendChild(bin);
+    bin.style.position = 'absolute';
+    bin.style.left = '32px';
+    bin.style.top = (desktop.offsetHeight - 42 - 90 - 32) + 'px';
+    bin.style.margin = '0';
     iconContainer.remove();
+    initBin();
   }, 600);
 }

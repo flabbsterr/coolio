@@ -21,7 +21,7 @@
       <span id="cursor" class="cursor">_</span>
       <div class="bios-footer">
         <div>
-          <div>Press <span style="color:#fff;font-weight:bold">DEL</span> to enter SETUP</div>
+          <div>Press <span style="color:#fff;font-weight:bold" id="del-hint">DEL</span> to enter SETUP</div>
           <div>01/07/2026-i440BX-W977-2A69KG0DC-00</div>
         </div>
         <span>For technical support call: 1-800-555-0199 (don't actually call this number)</span>
@@ -32,7 +32,7 @@
         <div>⚠ You weren't meant to actually press DEL.</div>
         <div>Here's a dad joke instead:</div>
         <div id="dad-joke" class="dad-joke"></div>
-        <div class="del-close">[Press any key to continue]</div>
+        <div class="del-close">[Press DEL to continue]</div>
       </div>
     </div>
 
@@ -42,21 +42,34 @@
           <div class="icon-graphic computer"></div>
           <span>My Computer</span>
         </div>
+        <div class="icon" onclick="openWindow('user-window')">
+          <div class="icon-graphic user"></div>
+          <span>My Profile</span>
+        </div>
         <div class="icon" onclick="openWindow('internet-window')">
           <div class="icon-graphic internet"></div>
           <span>Internet</span>
-        </div>
-        <div class="icon" onclick="openWindow('wallpaper-window')">
-          <div class="icon-graphic computer"></div>
-          <span>Wallpaper</span>
         </div>
         <div class="icon" onclick="openWindow('projects-window')">
           <div class="icon-graphic folder"></div>
           <span>Projects</span>
         </div>
-        <div class="icon" onclick="openWindow('user-window')">
-          <div class="icon-graphic user"></div>
-          <span>FLABBSTERR'S PAGE</span>
+        <div class="icon" onclick="openWindow('wallpaper-window')">
+          <div class="icon-graphic wallpaper"></div>
+          <span>Wallpaper</span>
+        </div>
+        <div class="icon" onclick="openWindow('achievements-window')">
+          <div class="icon-graphic trophy"></div>
+          <span>Achievements</span>
+        </div>
+        <div class="icon" onclick="openWindow('notepad-window')">
+          <div class="icon-graphic notepad"></div>
+          <span>Notepad</span>
+        </div>
+
+        <div class="icon" id="bin-icon">
+          <div class="icon-graphic bin"></div>
+          <span>Recycle Bin</span>
         </div>
       </div>
 
@@ -68,8 +81,11 @@
         <div class="window-content">
           <div class="welcome-inner">
             <div>
-              <h1>Welcome to your retro desktop</h1>
-              <p>Your machine has finished booting.</p>
+              <h1>Welcome to my retro (?) page</h1>
+              <p>I took inspiration from two people, being someone I saw on tiktok and one of my friends.</p>
+              <p>If you have any cool suggestions please lmk.</p>
+              <p>This page uses HTML, plain JavaScript, and CSS.</p>
+              <p style="font-size:0.8rem;color:#555;">Note: Theres some cool stuff I've added (or atleast I think so), try unlocking all achievements</p>
             </div>
             <pre class="welcome-ascii">         __
         / /\
@@ -108,8 +124,35 @@
           <span>Projects</span>
           <button onclick="closeWindow('projects-window')">x</button>
         </div>
-        <div class="window-content">
-          <p>This lol</p>
+        <div class="window-content" style="max-height:60vh;overflow-y:auto;">
+          <div class="project-card">
+            <div class="project-title">This site</div>
+            <div class="project-desc">A retro Windows-style portfolio desktop. You're looking at it.</div>
+            <div class="project-tech">HTML &bull; CSS &bull; JavaScript</div>
+            <a href="https://github.com/flabbsterr/coolio" target="_blank" class="project-link">&#128279; GitHub</a>
+          </div>
+          <div class="project-card">
+            <div class="project-title">studio27faro.com</div>
+            <div class="project-desc">Website for Studio 27 Faro, a studio based in Portugal. Built and redesigned with a team of four people.</div>
+            <div class="project-tech">HTML &bull; CSS &bull; JavaScript</div>
+            <a href="https://studio27faro.com" target="_blank" class="project-link">&#127760; Visit Site</a>
+          </div>
+          <div class="project-card" style="opacity:0.6;">
+            <div class="project-title">??? (private)</div>
+            <div class="project-desc">Most of my other projects are private or still in progress. More coming soon.</div>
+            <div class="project-tech">???</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="notepad-window" class="window secondary-window" style="display:none;top:15%;left:30%;width:420px;">
+        <div class="window-titlebar">
+          <span>Notepad</span>
+          <button onclick="closeWindow('notepad-window')">x</button>
+        </div>
+        <div class="window-content" style="padding:0;">
+          <textarea id="notepad-text" style="width:100%;height:280px;border:none;outline:none;resize:none;font-family:'Courier New',monospace;font-size:0.85rem;padding:0.8rem;background:#fff;color:#000;"></textarea>
         </div>
       </div>
 
@@ -141,6 +184,10 @@
           <div style="text-align:center; margin: 0.5rem 0; font-size:0.75rem; color:#888;">
             <div>&#128100; Visitors: <b id="visit-count">...</b></div>
             <div style="font-size:0.65rem;">You are visitor #<span id="visit-count-2">...</span>!</div>
+          </div>
+          <div style="margin-bottom:0.5rem;">
+            <b style="color:#c00;">:: Contact Me ::</b><br>
+            <span>Discord: <b>flabbsterr</b></span>
           </div>
           <div style="text-align:center; border-top: 2px solid #333; padding-top:0.5rem; font-size:0.7rem; color:#555;">
             &copy; 2026 &bull; don't @ me when im rich &bull; I'm goated btw
@@ -208,6 +255,14 @@
         </div>
       </div>
 
+      <div id="achievements-window" class="window secondary-window" style="display:none;top:10%;left:20%;width:400px;">
+        <div class="window-titlebar">
+          <span>Achievements</span>
+          <button onclick="closeWindow('achievements-window')">x</button>
+        </div>
+        <div class="window-content" id="achievements-list" style="max-height:60vh;overflow-y:auto;padding:0.8rem;"></div>
+      </div>
+
       <div id="clock-popup" style="display:none;" onclick="event.stopPropagation()">
         <div class="clock-popup-time" id="clock-popup-time">12:00:00 AM</div>
         <div class="clock-popup-date" id="clock-popup-date">Monday, January 1, 2026</div>
@@ -233,18 +288,22 @@
               <span>Projects</span>
             </div>
             <div class="start-menu-item" onclick="openWindow('wallpaper-window');toggleStartMenu()">
-              <div class="start-menu-icon computer"></div>
+              <div class="start-menu-icon wallpaper"></div>
               <span>Wallpaper</span>
+            </div>
+            <div class="start-menu-item" onclick="openWindow('achievements-window');toggleStartMenu()">
+              <div class="start-menu-icon trophy"></div>
+              <span>Achievements</span>
             </div>
           </div>
           <div class="start-menu-divider"></div>
           <div class="start-menu-right">
             <a class="start-menu-item" href="https://github.com/flabbsterr" target="_blank" onclick="toggleStartMenu()">
-              <div class="start-menu-icon internet"></div>
+              <div class="start-menu-icon github"></div>
               <span>My GitHub</span>
             </a>
             <div class="start-menu-item" onclick="openWindow('spotify-window');toggleStartMenu()">
-              <div class="start-menu-icon internet"></div>
+              <div class="start-menu-icon spotify"></div>
               <span>My Playlist</span>
             </div>
           </div>
@@ -253,6 +312,8 @@
           <button class="start-menu-shutdown" onclick="triggerShutdown()">⏻ Shut Down</button>
         </div>
       </div>
+
+      <div id="cat-nose" style="display:none;"></div>
 
       <div class="taskbar">
         <button class="start-btn" onclick="toggleStartMenu()">⊞ menu</button>
@@ -266,6 +327,8 @@
     </div>
 
     </div>
+    <img id="hourglass-cursor" src="assets/icons/hourglass.png" />
+    <img id="mouse-cursor" src="assets/icons/cursor.png" />
     <script src="script.js"></script>
   </body>
 </html>
