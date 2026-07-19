@@ -823,6 +823,14 @@ const dadJokes = [
   "Where does Darth Vader shop to get his sneakers? At the Darth Maul.",
   "Where does Darth Maul shoes to get his shoes? At the Darth Vader. what?",
   "Ridwan told me to make a joke about his name, but I don't think it would be very Ridwan-iculous.",
+  "Why did the gym close down? It just didn't work out.",
+  "I passed my driving test on the first try. I guess you could say I was driven to succeed.",
+  "Gio said im on KOS, but I don't know what that means. I guess he wants to kiss me",
+  "If you're an american when you enter the bathroom, and an american when you leave, what are you while you're in the bathroom? European.",
+  "What did the fish say when he swam into a wall? Dam.",
+  "How do you keep an idiot in suspense? I'll tell you tomorrow.",
+  "I'm tired of making these jokes boss, please no more, I can't think of any more jokes, I need to go to bed, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes.",
+  "I was going to tell a time-travel joke, but you guys didn't like it."
 ];
 
 document.addEventListener('keydown', function onDel(e) {
