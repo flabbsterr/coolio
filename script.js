@@ -51,38 +51,39 @@ function findFreeCell(preferredLeft, preferredTop, excludeEl) {
 const ACHIEVEMENTS = [
   {
     id: 'hidden_page',
-    icon: '👀',
     title: "You're not my DADD",
-    hint: 'Find the hidden menu on the loading start-up screen',
+    hint: 'find the hidden menu on the loading start-up screen',
     secret: true
   },
   {
     id: 'pong_losses',
-    icon: '🏓',
     title: 'Insane Skill Issue',
-    hint: 'Be bad at pong.',
+    hint: 'be bad at pong.',
     secret: false
   },
   {
     id: 'bin_crash',
-    icon: '🗑️',
     title: "how'd you do that kaspian?",
-    hint: 'Maybe the real trash was the computer all along.',
+    hint: 'maybe the real trash was the computer all along.',
     secret: true
   },
   {
     id: 'snake_resize',
-    icon: '🐍',
     title: 'Cyberpsycho',
-    hint: 'It’s not a bug, it’s a feature. Just a buggy resize feature.',
+    hint: 'dunno how to fix it, dont really care enough.',
     secret: true
   },
   {
     id: 'cat_nose',
-    icon: '🐱',
     title: 'oo iaa ooi iaaa',
-    hint: 'do not touch the cat nose 100 times',
+    hint: 'do not touch the cat nose 100 times (this is really buggy, sorry if it doesnt work)',
     secret: false
+  },
+ {
+    id: 'world',
+    title: 'Around the World',
+    hint: 'click on the world icon',
+    secret: true
   }
 ];
 
@@ -391,7 +392,28 @@ function initWallpapers() {
 }
 initWallpapers();
 
-// Visitor counter
+// Discord status via Lanyard
+function updateDiscordStatus() {
+  fetch('https://api.lanyard.rest/v1/users/627839997604528128')
+    .then(r => r.json())
+    .then(({ data }) => {
+      const dot = document.getElementById('discord-status-dot');
+      const text = document.getElementById('discord-status-text');
+      if (!dot || !text) return;
+      const status = data.discord_status;
+      const colors = { online: '#4cff4c', idle: '#ffcc00', dnd: '#ff4444', offline: '#aaa' };
+      const labels = { online: 'online', idle: 'idle', dnd: 'do not disturb', offline: 'offline (probably sleeping)' };
+      dot.style.background = colors[status] || '#aaa';
+      text.textContent = labels[status] || status;
+    })
+    .catch(() => {
+      const text = document.getElementById('discord-status-text');
+      if (text) text.textContent = 'status unavailable';
+    });
+}
+updateDiscordStatus();
+setInterval(updateDiscordStatus, 30000);
+
 fetch('https://api.counterapi.dev/v1/flabbsterr/visits/up')
   .then(r => r.json())
   .then(data => {
@@ -473,6 +495,21 @@ document.addEventListener('click', function(e) {
   }
 });
 
+
+document.getElementById('world-icon-btn').addEventListener('click', function() {
+  unlockAchievement('world');
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99995;display:flex;align-items:center;justify-content:center;';
+  const gif = document.createElement('img');
+  gif.src = 'assets/icons/aroundTheWorld.gif';
+  gif.style.cssText = 'max-width:80vw;max-height:80vh;image-rendering:pixelated;';
+  overlay.appendChild(gif);
+  document.body.appendChild(overlay);
+  const audio = new Audio('assets/mp3/aroundTheWorld.mp3');
+  audio.play();
+  audio.addEventListener('ended', () => { overlay.remove(); });
+  overlay.addEventListener('click', () => { audio.pause(); overlay.remove(); });
+});
 
 document.getElementById('taskbar-clock').style.cursor = 'pointer';
 document.getElementById('taskbar-clock').addEventListener('click', function() {
