@@ -84,6 +84,12 @@ const ACHIEVEMENTS = [
     title: 'Around the World',
     hint: 'click on the world icon',
     secret: true
+  },
+  {
+    id: 'shutdown',
+    title: 'Goodnight',
+    hint: 'Shut down the PC',
+    secret: false
   }
 ];
 
@@ -155,6 +161,7 @@ function makeDraggable(el, handle, snap) {
     if (!snap) bringToFront(el);
 
     window._draggingEl = el;
+      window._wasDragging = false;
     const rect = el.getBoundingClientRect();
     const offX = e.clientX - rect.left;
     const offY = e.clientY - rect.top;
@@ -186,6 +193,7 @@ function makeDraggable(el, handle, snap) {
       handle.style.cursor = 'grab';
       document.body.style.userSelect = '';
       window._lastDraggedEl = el;
+      window._wasDragging = true;
       window._draggingEl = null;
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
@@ -200,6 +208,11 @@ function makeDraggable(el, handle, snap) {
             unlockAchievement('bin_crash');
             triggerBSOD();
           } else {
+            const winId = el.getAttribute('onclick');
+            if (winId) {
+              const match = winId.match(/openWindow\('([^']+)'\)/);
+              if (match) closeWindow(match[1]);
+            }
             el.remove();
           }
           return;
@@ -466,20 +479,21 @@ function toggleStartMenu() {
 }
 
 function triggerShutdown() {
-  const menu = document.getElementById('start-menu');
-  menu.style.display = 'none';
-  const d = document.getElementById('desktop');
-  d.style.transition = 'opacity 1.5s';
-  d.style.opacity = '0';
-  d.style.pointerEvents = 'none';
-  setTimeout(() => {
-    d.style.background = '#000';
-    d.style.opacity = '1';
-    const msg = document.createElement('div');
-    msg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-family:"Trebuchet MS",sans-serif;font-size:1.1rem;text-align:center;line-height:2;';
-    msg.innerHTML = 'It is now safe to turn off your computer.<br><span style="font-size:0.8rem;color:#aaa;">( refresh to restart )</span>';
-    d.appendChild(msg);
-  }, 1500);
+  document.getElementById('start-menu').style.display = 'none';
+  unlockAchievement('shutdown');
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:#000;z-index:999998;opacity:0;transition:opacity 1.5s;display:flex;align-items:center;justify-content:center;';
+  const msg = document.createElement('div');
+  msg.style.cssText = 'color:#fff;font-family:"Trebuchet MS",sans-serif;font-size:1.1rem;text-align:center;line-height:2;opacity:0;transition:opacity 0.5s;';
+  msg.innerHTML = 'It is now safe to turn off your computer.<br><span style="font-size:0.8rem;color:#aaa;">( refresh to restart )</span>';
+  overlay.appendChild(msg);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      overlay.style.opacity = '1';
+      setTimeout(() => { msg.style.opacity = '1'; }, 1500);
+    });
+  });
 }
 
 document.addEventListener('click', function(e) {
@@ -664,7 +678,7 @@ function startPong(canvas, ctx) {
     if(ball.y<=0||ball.y>=H) ball.vy*=-1;
     if(ball.x<=16&&ball.y>=p1.y&&ball.y<=p1.y+PAD.h) { ball.vx=Math.abs(ball.vx)*1.05; }
     if(ball.x>=W-16&&ball.y>=p2.y&&ball.y<=p2.y+PAD.h) { ball.vx=-Math.abs(ball.vx)*1.05; }
-    if(ball.x<0){s2++;reset(W,H); pongLosses++; localStorage.setItem('pongLosses',pongLosses); if(pongLosses>=10) unlockAchievement('pong_losses');}
+    if(ball.x<0){s2++;reset(W,H); pongLosses++; localStorage.setItem('pongLosses',pongLosses); if(pongLosses>=3) unlockAchievement('pong_losses');}
     if(ball.x>W){s1++;reset(W,H);}
     ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
     ctx.fillStyle='#fff';
@@ -701,7 +715,7 @@ function initBin() {
     const overBin = e.clientX >= binRect.left && e.clientX <= binRect.right &&
                     e.clientY >= binRect.top  && e.clientY <= binRect.bottom;
     bin.classList.remove('bin-drop-active');
-    if (!overBin || !dragged) return;
+    if (!overBin || !dragged || !window._wasDragging) return;
     if (dragged.classList.contains('icon') && dragged !== bin) {
       dragged.remove();
     }
@@ -842,11 +856,11 @@ function startBoot() {
   bootLines.innerHTML = '';
   document.getElementById('award-header').style.display = 'flex';
   document.getElementById('skip-btn').style.display = 'block';
+  const delHint = document.getElementById('del-hint');
+  delHint.style.textDecoration = 'underline';
+  delHint.style.cursor = 'pointer';
+  delHint.addEventListener('click', () => document.dispatchEvent(new KeyboardEvent('keydown', {key:'Delete'})));
   if (isMobile) {
-    const delHint = document.getElementById('del-hint');
-    delHint.style.textDecoration = 'underline';
-    delHint.style.cursor = 'pointer';
-    delHint.addEventListener('click', () => document.dispatchEvent(new KeyboardEvent('keydown', {key:'Delete'})));
   }
   bootScreen.removeEventListener('click', startBoot);
   document.removeEventListener('keydown', onEnter);
@@ -951,7 +965,7 @@ function finish() {
       // add resize handle
       const resizeHandle = document.createElement('div');
       resizeHandle.className = 'resize-handle';
-      resizeHandle.style.cssText = 'position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:se-resize;background:linear-gradient(135deg,transparent 50%,#aaa 50%);';
+      resizeHandle.style.cssText = 'position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:se-resize;background:linear-gradient(135deg,transparent 50%,#888 50%);z-index:10;';
       w.style.position = 'absolute';
       w.appendChild(resizeHandle);
       resizeHandle.addEventListener('mousedown', function(e) {
@@ -977,20 +991,26 @@ function finish() {
         document.addEventListener('mouseup', onUp);
       });
     });
-    iconData.forEach(({ el, left, top }, i) => {
+    iconData.forEach(({ el }, i) => {
+      const totalIcons = iconData.length + 1;
+      const availH = desktop.offsetHeight - 42 - 64;
+      const dynGrid = Math.min(90, Math.floor(availH / totalIcons));
       desktop.appendChild(el);
       el.style.position = 'absolute';
       el.style.left = '32px';
-      el.style.top = (32 + i * 90) + 'px';
+      el.style.top = (32 + i * dynGrid) + 'px';
       el.style.margin = '0';
       makeDraggable(el, el, true);
     });
     // place bin icon on desktop
     const bin = document.getElementById('bin-icon');
+    const totalIcons = iconData.length + 1;
+    const availH = desktop.offsetHeight - 42 - 64;
+    const dynGrid = Math.min(90, Math.floor(availH / totalIcons));
     desktop.appendChild(bin);
     bin.style.position = 'absolute';
     bin.style.left = '32px';
-    bin.style.top = (desktop.offsetHeight - 42 - 90 - 32) + 'px';
+    bin.style.top = (32 + iconData.length * dynGrid) + 'px';
     bin.style.margin = '0';
     iconContainer.remove();
     initBin();
