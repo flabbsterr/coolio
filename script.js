@@ -112,6 +112,67 @@ function unlockAchievement(id) {
   const a = ACHIEVEMENTS.find(x => x.id === id);
   if (a) showAchievementToast(a);
   if (document.getElementById('achievements-window').style.display !== 'none') renderAchievements();
+  if (ACHIEVEMENTS.every(x => data[x.id])) triggerGoldTaskbar();
+}
+
+function triggerGoldTaskbar() {
+  if (localStorage.getItem('goldTaskbar') !== '1') {
+    localStorage.setItem('goldTaskbar', '1');
+    showAchievementToast({ title: 'well done, you got all achievements. As a reward, you can now use a golden taskbar (how mundane, i know)' });
+  }
+  applyGoldTaskbar();
+  updateGoldToggleButton();
+}
+
+function applyGoldTaskbar() {
+  const taskbar = document.querySelector('.taskbar');
+  if (!taskbar) return;
+  // only apply gold visuals if achievements are fully unlocked
+  const ach = getAchievements();
+  const allUnlocked = ACHIEVEMENTS.every(x => ach[x.id]);
+  if (!allUnlocked) {
+    taskbar.style.background = '';
+    taskbar.style.color = '';
+    document.body.classList.remove('gold-theme');
+    return;
+  }
+  const on = localStorage.getItem('goldTaskbarOn') !== '0';
+  if (on) {
+    taskbar.style.background = 'linear-gradient(180deg,#ffe066 0%,#c8960a 100%)';
+    taskbar.style.color = '#3a2a00';
+  } else {
+    taskbar.style.background = '';
+    taskbar.style.color = '';
+  }
+  try {
+    document.body.classList.toggle('gold-theme', on);
+  } catch (e) {
+  }
+}
+
+function toggleGoldTaskbar() {
+  if (localStorage.getItem('goldTaskbar') !== '1') return;
+  const on = localStorage.getItem('goldTaskbarOn') !== '0';
+  localStorage.setItem('goldTaskbarOn', on ? '0' : '1');
+  // Update visuals immediately
+  applyGoldTaskbar();
+  updateGoldToggleButton();
+}
+
+function updateGoldToggleButton() {
+  const btn = document.getElementById('gold-toggle');
+  if (!btn) return;
+  // Only shows the toggle if the achievements are fully complete and gold unlocked
+  const ach = getAchievements();
+  const allUnlocked = ACHIEVEMENTS.every(x => ach[x.id]);
+  const unlocked = localStorage.getItem('goldTaskbar') === '1';
+  if (!allUnlocked || !unlocked) {
+    btn.style.display = 'none';
+    return;
+  }
+  btn.style.display = 'inline-block';
+  const on = localStorage.getItem('goldTaskbarOn') !== '0';
+  btn.textContent = on ? 'Gold: ON' : 'Gold: OFF';
 }
 
 function showAchievementToast(a) {
@@ -152,7 +213,6 @@ function bringToFront(el) {
 }
 
 function makeDraggable(el, handle, snap) {
-  if (isMobile) return;
   handle = handle || el;
   handle.style.cursor = 'grab';
   handle.addEventListener('mousedown', function(e) {
@@ -170,22 +230,21 @@ function makeDraggable(el, handle, snap) {
     handle.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
     function onMove(e) {
+      window._wasDragging = true;
+      const desktop = document.getElementById('desktop');
+      const taskbarH = 42;
+      const titlebarH = 32;
+      const minVisible = 60;
+      const newLeft = e.clientX - offX;
+      const newTop = e.clientY - offY;
       if (snap) {
-        const desktop = document.getElementById('desktop');
-        const taskbarH = 42;
-        const maxLeft = desktop.offsetWidth - 90;
-        const maxTop = desktop.offsetHeight - taskbarH - 90;
-        el.style.left = Math.max(0, Math.min(e.clientX - offX, maxLeft)) + 'px';
-        el.style.top = Math.max(0, Math.min(e.clientY - offY, maxTop)) + 'px';
-      } else {
-        const desktop = document.getElementById('desktop');
-        const taskbarH = 42;
-        const titlebarH = 32;
-        const minVisible = 60;
-        const newLeft = e.clientX - offX;
-        const newTop = e.clientY - offY;
         el.style.left = Math.max(-(el.offsetWidth - minVisible), Math.min(newLeft, desktop.offsetWidth - minVisible)) + 'px';
         el.style.top = Math.max(0, Math.min(newTop, desktop.offsetHeight - taskbarH - titlebarH)) + 'px';
+      } else {
+        const boundedLeft = Math.max(-(el.offsetWidth - minVisible), Math.min(newLeft, desktop.offsetWidth - minVisible));
+        const boundedTop = Math.max(0, Math.min(newTop, desktop.offsetHeight - taskbarH - (el.offsetHeight || el.getBoundingClientRect().height)));
+        el.style.left = boundedLeft + 'px';
+        el.style.top = boundedTop + 'px';
       }
       el.style.transform = 'none';
     }
@@ -266,7 +325,7 @@ document.addEventListener('mousedown', () => {
 document.addEventListener('mouseup', () => {
   mouseCursorEl.style.transform = 'none';
 });
-} // end !isMobile
+} 
 
 function showHourglass() {
   document.body.classList.add('cursor-wait');
@@ -404,8 +463,10 @@ function initWallpapers() {
   });
 }
 initWallpapers();
+if (localStorage.getItem('goldTaskbar') === '1') applyGoldTaskbar();
+updateGoldToggleButton();
 
-// Discord status via Lanyard
+// Discord status
 function updateDiscordStatus() {
   fetch('https://api.lanyard.rest/v1/users/627839997604528128')
     .then(r => r.json())
@@ -472,9 +533,13 @@ function toggleStartMenu() {
   const menu = document.getElementById('start-menu');
   const isHidden = menu.style.display === 'none';
   menu.style.display = isHidden ? 'block' : 'none';
+  const popup = document.getElementById('clock-popup');
+  if (popup) popup.style.display = 'none';
+  const taskbar = document.querySelector('.taskbar');
   if (isHidden) {
-    const popup = document.getElementById('clock-popup');
-    if (popup) popup.style.display = 'none';
+    updateGoldToggleButton();
+  } else {
+    applyGoldTaskbar();
   }
 }
 
@@ -830,7 +895,8 @@ const dadJokes = [
   "What did the fish say when he swam into a wall? Dam.",
   "How do you keep an idiot in suspense? I'll tell you tomorrow.",
   "I'm tired of making these jokes boss, please no more, I can't think of any more jokes, I need to go to bed, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes.",
-  "I was going to tell a time-travel joke, but you guys didn't like it."
+  "I was going to tell a time-travel joke, but you guys didn't like it.",
+  "It's lupus,"
 ];
 
 document.addEventListener('keydown', function onDel(e) {
@@ -855,7 +921,6 @@ function beep() {
   bootAudio.play();
 }
 
-// Show PRESS ENTER immediately
 const firstDiv = document.createElement('div');
 firstDiv.textContent = '[ PRESS ENTER TO START ]';
 bootLines.appendChild(firstDiv);
@@ -945,11 +1010,17 @@ function finish() {
   bootScreen.style.pointerEvents = 'none';
   desktop.classList.remove('hidden');
   const iconContainer = document.querySelector('.desktop-icons');
-  const iconData = Array.from(document.querySelectorAll('.icon')).map(icon => ({
-    el: icon,
-    left: icon.offsetLeft + iconContainer.offsetLeft,
-    top: icon.offsetTop + iconContainer.offsetTop
-  }));
+  const iconData = Array.from(document.querySelectorAll('.icon')).map(icon => {
+    const onclickAttr = icon.getAttribute('onclick') || '';
+    const match = onclickAttr.match(/openWindow\('([^']+)'\)/);
+    const winId = match ? match[1] : null;
+    return {
+      el: icon,
+      left: icon.offsetLeft + iconContainer.offsetLeft,
+      top: icon.offsetTop + iconContainer.offsetTop,
+      winId
+    };
+  });
   const startup = new Audio('assets/mp3/Startup.mp3');
   startup.volume = 0.3;
   startup.play();
@@ -999,7 +1070,7 @@ function finish() {
         document.addEventListener('mouseup', onUp);
       });
     });
-    iconData.forEach(({ el }, i) => {
+    iconData.forEach(({ el, winId }, i) => {
       const totalIcons = iconData.length + 1;
       const availH = desktop.offsetHeight - 42 - 64;
       const dynGrid = Math.min(90, Math.floor(availH / totalIcons));
@@ -1008,6 +1079,15 @@ function finish() {
       el.style.left = '32px';
       el.style.top = (32 + i * dynGrid) + 'px';
       el.style.margin = '0';
+      // require double-click to open; remove single-click handler if present
+      if (winId) {
+        el.removeAttribute('onclick');
+        el.addEventListener('dblclick', function(e) {
+          // prevent dblclick from also triggering drag behavior
+          e.stopPropagation();
+          openWindow(winId);
+        });
+      }
       makeDraggable(el, el, true);
     });
     // place bin icon on desktop
@@ -1022,5 +1102,7 @@ function finish() {
     bin.style.margin = '0';
     iconContainer.remove();
     initBin();
+    // Update Start menu gold toggle button visibility/state
+    updateGoldToggleButton();
   }, 600);
 }

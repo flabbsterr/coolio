@@ -743,11 +743,15 @@ body {
   display: flex;
   justify-content: space-between;
 }
-
+/* Cat nose clickable hit area */
+#cat-nose {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255,0,0,0);
-  z-index: 9;
+  background: rgba(255,0,0,0); /* transparent but clickable */
+  z-index: 9999;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .taskbar-right {
@@ -804,3 +808,38 @@ body {
   .taskbar-tabs { display: none; }
   .taskbar-right span:not(#taskbar-clock) { display: none; }
 }
+
+/* Gold theme overrides — applied when body has .gold-theme */
+.gold-theme .taskbar {
+  background: linear-gradient(180deg,#ffe066 0%,#c8960a 100%);
+  color: #3a2a00;
+}
+.gold-theme .window-titlebar {
+  background: linear-gradient(90deg,#c8960a 0%,#ffe066 100%);
+  color: #3a2a00;
+}
+.gold-theme .start-menu-banner {
+  background: linear-gradient(90deg,#c8960a 0%,#ffe066 100%);
+  color: #3a2a00;
+}
+.gold-theme .start-btn {
+  background: linear-gradient(180deg,#ffd966 0%,#d4a200 100%);
+  color: #3a2a00;
+  border-color: #b07b00;
+}
+.gold-theme .taskbar-tab {
+  background: linear-gradient(180deg,#ffd966 0%,#d4a200 100%);
+  color: #3a2a00;
+  border-color: #b07b00;
+}
+.gold-theme .taskbar-right {
+  background: rgba(58,42,0,0.12);
+  color: #3a2a00;
+}
+.gold-theme .start-menu-item:hover {
+  background: linear-gradient(90deg,#d4a200,#ffd966);
+  color: #3a2a00;
+}
+.gold-theme .start-menu-item { color: #3a2a00; }
+.gold-theme .start-menu-shutdown { background: linear-gradient(180deg,#ffd966 0%,#d4a200 100%); color:#3a2a00; border-color:#b07b00; }
+

@@ -300,14 +300,17 @@
           </div>
         </div>
         <div class="start-menu-footer">
-          <button class="start-menu-shutdown" onclick="triggerShutdown()">⏻ Shut Down</button>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <button id="gold-toggle" style="display:none;" class="start-menu-shutdown" onclick="toggleGoldTaskbar()">Toggle Gold</button>
+            <button class="start-menu-shutdown" onclick="triggerShutdown()">⏻ Shut Down</button>
+          </div>
         </div>
       </div>
 
       <div id="cat-nose" style="display:none;"></div>
 
       <div class="taskbar">
-        <button class="start-btn" onclick="toggleStartMenu()">⊞ menu</button>
+        <button class="start-btn" onclick="toggleStartMenu();">⊞ menu</button>
         <div id="taskbar-tabs" class="taskbar-tabs"></div>
         <div class="taskbar-right">
           <span>🔊</span>
