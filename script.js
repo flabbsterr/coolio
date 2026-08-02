@@ -887,16 +887,27 @@ const dadJokes = [
   "I would tell you a construction joke, but I'm still working on it. Its gonna be finished when rell seas drops.",
   "Where does Darth Vader shop to get his sneakers? At the Darth Maul.",
   "Where does Darth Maul shoes to get his shoes? At the Darth Vader. what?",
-  "Ridwan told me to make a joke about his name, but I don't think it would be very Ridwan-iculous.",
+  "Ridwan told me not to make a joke about his name, but I think it would be very Ridwan-iculous if I didn't.",
   "Why did the gym close down? It just didn't work out.",
   "I passed my driving test on the first try. I guess you could say I was driven to succeed.",
-  "Gio said im on KOS, but I don't know what that means. I guess he wants to kiss me",
   "If you're an american when you enter the bathroom, and an american when you leave, what are you while you're in the bathroom? European.",
   "What did the fish say when he swam into a wall? Dam.",
   "How do you keep an idiot in suspense? I'll tell you tomorrow.",
-  "I'm tired of making these jokes boss, please no more, I can't think of any more jokes, I need to go to bed, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes.",
+  "I'm tired of making these jokes boss, please no more, I can't think of any more jokes, I need to go to bed, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes, I can't think of any more jokes, please no more jokes.",
   "I was going to tell a time-travel joke, but you guys didn't like it.",
-  "It's lupus,"
+  "It's lupus,",
+  "What do you call a spider with 10 eyes, a Spiiiiiiiiiider",
+  "What side of a chicken has the most feathers? The outside.",
+  "What do you call a cow with no legs? Ground beef.",
+  "Why did the coffee file a police report? It got mugged.",
+  "Why did the math book look sad? Because it had too many problems.",
+  "Why did the chicken cross the playground? To get to the other slide.",
+  "Why did the banana go to the doctor? Because it wasn't peeling well.",
+  "Why did the computer go to the doctor? It had a virus.",
+  "Why did the golfer bring two pairs of pants? In case he got a hole in one.",
+  "What do you call a fish with no eyes? Fsh.",
+  "What do you call a fish with a bowtie? Sofishticated.",
+  "Three blondes walk into a bar, you think the other two would have seen it!"
 ];
 
 document.addEventListener('keydown', function onDel(e) {
