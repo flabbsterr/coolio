@@ -213,8 +213,9 @@ body {
   z-index: 1;
 }
 
+/* Restore the normal system cursor */
 * {
-  cursor: none !important;
+  cursor: auto !important;
 }
 
 #hourglass-cursor {
