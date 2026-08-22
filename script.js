@@ -129,6 +129,7 @@ function confirmResetAchievements() {
   renderAchievements();
   applyGoldTaskbar();
   updateGoldToggleButton();
+  initWallpapers();
 }
 
 function unlockAchievement(id) {
@@ -138,6 +139,7 @@ function unlockAchievement(id) {
   localStorage.setItem('achievements', JSON.stringify(data));
   const a = ACHIEVEMENTS.find(x => x.id === id);
   if (a) { new Audio('assets/mp3/achievementUnlock.mp3').play(); showAchievementToast(a); }
+  if (id === 'scp096') initWallpapers();
   if (document.getElementById('achievements-window').style.display !== 'none') renderAchievements();
   if (ACHIEVEMENTS.every(x => data[x.id])) triggerGoldTaskbar();
 }
@@ -429,7 +431,7 @@ const wallpapers = [
   'assets/wallpapers/exploding-cat.jpg',
   'assets/wallpapers/pixelated.png',
   'assets/wallpapers/xp.jpeg',
-  'assets/wallpapers/Scp069.jpg',
+  'assets/wallpapers/Scp096.jpg',
 ];
 
 function applyWallpaper(src) {
@@ -449,7 +451,7 @@ function applyWallpaper(src) {
   } else {
     nose.style.display = 'none';
   }
-  if (src && src.includes('Scp069')) {
+  if (src && src.includes('Scp096')) {
     let hitArea = document.getElementById('scp096-hit');
     if (!hitArea) {
       hitArea = document.createElement('div');
@@ -472,7 +474,14 @@ function applyWallpaper(src) {
       unlockAchievement('scp096');
       const scream = new Audio('assets/mp3/scp096scream.mp3');
       scream.play();
-      scream.addEventListener('ended', triggerBSOD);
+      scream.addEventListener('ended', () => {
+        if (localStorage.getItem('wallpaper') && localStorage.getItem('wallpaper').includes('Scp096')) {
+          applyWallpaper('');
+          localStorage.removeItem('wallpaper');
+          initWallpapers();
+        }
+        triggerBSOD();
+      });
     };
   } else {
     const hitArea = document.getElementById('scp096-hit');
@@ -510,6 +519,7 @@ window.addEventListener('resize', () => {
 
 function initWallpapers() {
   const list = document.getElementById('wallpaper-list');
+  list.innerHTML = '';
   const saved = localStorage.getItem('wallpaper');
   if (saved) applyWallpaper(saved);
 
@@ -526,6 +536,8 @@ function initWallpapers() {
   list.appendChild(none);
 
   wallpapers.forEach(src => {
+    const isScp = src.includes('Scp096');
+    if (isScp && getAchievements()['scp096']) return;
     const img = document.createElement('img');
     img.src = src;
     img.title = src.split('/').pop();
