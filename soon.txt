@@ -2,7 +2,6 @@ things to add:
 MAYBE add a way for people to give improvments / things they want added through the website, connected to a discord bot which messages me with what was said
 
 things to change:
-remove spotify API as it may be banned for them locally, instead ill upload music to github and make it playable from the tab itself
 
 Things to fix:
 fix the api which counts how many users visit the website
@@ -23,3 +22,4 @@ add more wallpapers
 more achviments 
 achivment images 
 add more rewards for achivments
+remove spotify API as it may be banned for them locally, instead ill upload music to github and make it playable from the tab itself
