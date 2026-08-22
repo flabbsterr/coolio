@@ -51,8 +51,8 @@ function findFreeCell(preferredLeft, preferredTop, excludeEl) {
 const ACHIEVEMENTS = [
   {
     id: 'hidden_page',
-    title: "You're not my DADD",
-    hint: 'find the hidden menu on the loading start-up screen',
+    title: "Whats worse than a dad joke, Two dad jokes.",
+    hint: 'find the hidden menu on the start-up screen',
     secret: true
   },
   {
@@ -68,9 +68,9 @@ const ACHIEVEMENTS = [
     secret: true
   },
   {
-    id: 'snake_resize',
-    title: 'Cyberpsycho',
-    hint: 'dunno how to fix it, dont really care enough.',
+    id: 'ouroboros',
+    title: 'Ouroboros',
+    hint: 'a boundless cycle',
     secret: true
   },
   {
@@ -90,6 +90,18 @@ const ACHIEVEMENTS = [
     title: 'Goodnight',
     hint: 'Shut down the PC',
     secret: false
+  },
+  {
+    id: 'konami_code',
+    title: 'REF HES CHEATING',
+    hint: 'up up down down left right left right B A',
+    secret: true
+  },
+  {
+    id: 'scp096',
+    title: 'Four Pixels',
+    hint: 'you looked at it.',
+    secret: true
   }
 ];
 
@@ -101,8 +113,23 @@ window.resetAchievements = function() {
   localStorage.removeItem('achievements');
   localStorage.removeItem('pongLosses');
   localStorage.removeItem('catNoseCount');
+  localStorage.removeItem('goldTaskbar');
+  localStorage.removeItem('goldTaskbarOn');
   console.log('Achievements reset.');
 };
+
+function promptResetAchievements() {
+  document.getElementById('reset-confirm').style.display = 'flex';
+}
+
+function confirmResetAchievements() {
+  window.resetAchievements();
+  catNoseCount = 0;
+  document.getElementById('reset-confirm').style.display = 'none';
+  renderAchievements();
+  applyGoldTaskbar();
+  updateGoldToggleButton();
+}
 
 function unlockAchievement(id) {
   const data = getAchievements();
@@ -110,7 +137,7 @@ function unlockAchievement(id) {
   data[id] = Date.now();
   localStorage.setItem('achievements', JSON.stringify(data));
   const a = ACHIEVEMENTS.find(x => x.id === id);
-  if (a) showAchievementToast(a);
+  if (a) { new Audio('assets/mp3/achievementUnlock.mp3').play(); showAchievementToast(a); }
   if (document.getElementById('achievements-window').style.display !== 'none') renderAchievements();
   if (ACHIEVEMENTS.every(x => data[x.id])) triggerGoldTaskbar();
 }
@@ -177,15 +204,15 @@ function updateGoldToggleButton() {
 
 function showAchievementToast(a) {
   const toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-100%);background:#000080;color:#fff;border:3px solid #fff;border-top:none;padding:0.8rem 1.4rem;font-size:0.95rem;z-index:9999999;border-radius:0;min-width:320px;box-shadow:inset 1px 1px 0 #aaaaff, inset -1px -1px 0 #000033, 4px 4px 0 #000;transition:transform 0.4s ease;font-family:"Perfect DOS VGA 437","Courier New",monospace;';
-  toast.innerHTML = `<div style="background:linear-gradient(90deg,#000080,#1084d0);color:#fff;font-weight:bold;margin:-0.8rem -1.4rem 0.6rem;padding:0.3rem 0.6rem;font-size:0.85rem;border-bottom:2px solid #fff;letter-spacing:0.05em;">Achievement Unlocked!</div><div style="font-size:1rem;letter-spacing:0.03em;">${a.title}</div>`;
+  toast.className = 'achievement-toast';
+  toast.innerHTML = `<div class="achievement-toast-bar"><span class="achievement-toast-label">Achievement Unlocked!</span></div><div class="achievement-toast-title">${a.title}</div>`;
   document.body.appendChild(toast);
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      toast.style.transform = 'translateX(-50%) translateY(12px)';
+      toast.classList.add('achievement-toast-in');
       setTimeout(() => {
-        toast.style.transform = 'translateX(-50%) translateY(-100%)';
-        setTimeout(() => toast.remove(), 400);
+        toast.classList.remove('achievement-toast-in');
+        setTimeout(() => toast.remove(), 500);
       }, 3200);
     });
   });
@@ -200,7 +227,12 @@ function renderAchievements() {
     const unlocked = !!data[a.id];
     const div = document.createElement('div');
     div.className = 'achievement' + (unlocked ? '' : ' locked');
-    div.innerHTML = `<div class="achievement-icon">${unlocked ? '<div style="width:32px;height:32px;"></div>' : '<img src="assets/icons/lockedAchivement.png" style="width:32px;height:32px;image-rendering:pixelated;">'}</div><div><div class="achievement-title">${unlocked ? a.title : '???'}</div><div class="achievement-desc">${unlocked ? a.hint : a.hint}</div></div>`;
+    const ext = a.id === 'cat_nose' ? 'gif' : a.id === 'konami_code' ? 'webp' : 'png';
+    const imgSrc = `assets/icons/achivement/${a.id}.${ext}`;
+    const iconHtml = unlocked
+      ? `<img src="${imgSrc}" style="width:40px;height:40px;object-fit:contain;image-rendering:pixelated;">`
+      : `<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#aaa;font-weight:bold;">?</div>`;
+    div.innerHTML = `<div class="achievement-icon">${iconHtml}</div><div><div class="achievement-title">${unlocked ? a.title : '???'}</div><div class="achievement-desc">${a.hint}</div></div>`;
     list.appendChild(div);
   });
 }
@@ -339,7 +371,7 @@ function showHourglass() {
 function openWindow(id) {
   showHourglass();
   const w = document.getElementById(id);
-  w.style.display = id === 'spotify-window' ? 'flex' : 'block';
+  w.style.display = id === 'spotify-window' || id === 'notepad-window' || id === 'internet-window' ? 'flex' : 'block';
   bringToFront(w);
   removeTaskbarTab(id);
   if (id === 'computer-window') populateSysInfo();
@@ -348,6 +380,10 @@ function openWindow(id) {
     const ta = document.getElementById('notepad-text');
     ta.value = localStorage.getItem('notepad') || '';
     ta.oninput = () => localStorage.setItem('notepad', ta.value);
+  }
+  if (id === 'internet-window') {
+    document.getElementById('game-picker').style.display = 'flex';
+    document.getElementById('game-area').style.display = 'none';
   }
 }
 
@@ -385,6 +421,7 @@ const wallpapers = [
   'assets/wallpapers/exploding-cat.jpg',
   'assets/wallpapers/pixelated.png',
   'assets/wallpapers/xp.jpeg',
+  'assets/wallpapers/Scp069.jpg',
 ];
 
 function applyWallpaper(src) {
@@ -403,6 +440,38 @@ function applyWallpaper(src) {
     positionCatNose();
   } else {
     nose.style.display = 'none';
+  }
+  if (src && src.includes('Scp069')) {
+    let hitArea = document.getElementById('scp096-hit');
+    if (!hitArea) {
+      hitArea = document.createElement('div');
+      hitArea.id = 'scp096-hit';
+      hitArea.style.cssText = 'position:absolute;width:160px;height:160px;border-radius:50%;z-index:9998;cursor:pointer;';
+      document.getElementById('desktop').appendChild(hitArea);
+    }
+    function positionHit() {
+      const dw = d.offsetWidth, dh = d.offsetHeight;
+      hitArea.style.left = (dw * 0.72 - 30) + 'px';
+      hitArea.style.top  = (dh * 0.54 - 30) + 'px';
+    }
+    positionHit();
+    window._scpHitResize = positionHit;
+    window.addEventListener('resize', window._scpHitResize);
+    hitArea.style.display = 'block';
+    hitArea.onclick = function() {
+      hitArea.onclick = null;
+      hitArea.style.display = 'none';
+      unlockAchievement('scp096');
+      const scream = new Audio('assets/mp3/scp096scream.mp3');
+      scream.play();
+      scream.addEventListener('ended', triggerBSOD);
+    };
+  } else {
+    const hitArea = document.getElementById('scp096-hit');
+    if (hitArea) hitArea.style.display = 'none';
+    if (window._scpHitResize) { window.removeEventListener('resize', window._scpHitResize); window._scpHitResize = null; }
+    d.onclick = null;
+    d.style.cursor = '';
   }
 }
 
@@ -499,7 +568,7 @@ fetch('https://api.counterapi.dev/v1/flabbsterr/visits/up')
   })
   .catch(() => {
     const el1 = document.getElementById('visit-count');
-    if (el1) el1.textContent = '??????';
+    if (el1) el1.textContent = 'ts dont work bro';
   });
 
 function updateClock() {
@@ -631,45 +700,126 @@ function backToGames() {
 
 function loadGame(name) {
   document.getElementById('game-picker').style.display = 'none';
-  document.getElementById('game-area').style.display = 'block';
   const canvas = document.getElementById('game-canvas');
   const ctx = canvas.getContext('2d');
   if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
   if (gameResizeObserver) { gameResizeObserver.disconnect(); gameResizeObserver = null; }
+  if (window._pongCleanup) { window._pongCleanup(); window._pongCleanup = null; }
 
-  function resizeAndStart() {
-    const area = document.getElementById('game-area');
-    canvas.width = canvas.offsetWidth || area.offsetWidth;
-    canvas.height = Math.round(canvas.width * (280/360));
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
-    if (window._pongCleanup) { window._pongCleanup(); window._pongCleanup = null; }
-    if (name === 'snake') startSnake(canvas, ctx);
-    if (name === 'pong') startPong(canvas, ctx);
-  }
-
-  resizeAndStart();
   document.getElementById('game-title').textContent = name === 'snake' ? 'Snake' : 'Pong';
   document.getElementById('game-area').style.display = 'flex';
-  let snakeResizeReady = false;
-  setTimeout(() => { snakeResizeReady = true; }, 500);
-  gameResizeObserver = new ResizeObserver(() => {
-    resizeAndStart();
-    if (name === 'snake' && snakeResizeReady) unlockAchievement('snake_resize');
-  });
-  gameResizeObserver.observe(document.getElementById('internet-window'));
+
+  function setCanvasSize() {
+    const area = document.getElementById('game-area');
+    const toolbar = area.querySelector('div');
+    canvas.width = area.offsetWidth;
+    canvas.height = area.offsetHeight - (toolbar ? toolbar.offsetHeight : 0);
+  }
+
+  setCanvasSize();
+  if (name === 'snake') startSnake(canvas, ctx);
+  if (name === 'pong') startPong(canvas, ctx);
+
+  // attach observer AFTER game starts to avoid triggering pause on load
+  setTimeout(() => {
+    gameResizeObserver = new ResizeObserver(() => {
+      if (name === 'snake') {
+        window._snakePauseResize && window._snakePauseResize();
+      } else {
+        if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
+        if (window._pongCleanup) { window._pongCleanup(); window._pongCleanup = null; }
+        setCanvasSize();
+        startPong(canvas, ctx);
+      }
+    });
+    gameResizeObserver.observe(document.getElementById('internet-window'));
+  }, 200);
 }
 
 function startSnake(canvas, ctx) {
-  const W = canvas.width, H = canvas.height, S = 20;
+  const S = 20;
+  let W = canvas.width, H = canvas.height;
   let snake = [{x:5,y:5}], dir = {x:1,y:0}, next = {x:1,y:0};
   let food = randomFood();
-  let score = 0, dead = false;
-  document.getElementById('game-msg').textContent = 'WASD or arrows to move';
+  let score = 0, dead = false, paused = false;
+  document.getElementById('game-msg').textContent = 'WASD or arrows to move  |  ESC to pause';
 
   function randomFood() {
     return { x: Math.floor(Math.random()*(W/S)), y: Math.floor(Math.random()*(H/S)) };
   }
+
+  function drawPaused() {
+    ctx.fillStyle='rgba(0,0,0,0.55)';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#fff';
+    ctx.font='bold 22px monospace';
+    ctx.textAlign='center';
+    ctx.fillText('PAUSED',W/2,H/2-10);
+    ctx.font='16px monospace';
+    ctx.fillText('Score: '+score,W/2,H/2+15);
+    ctx.font='14px monospace';
+    ctx.fillText('RESUME',W/2,H/2+40);
+  }
+
+  function drawGame() {
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#0f0';
+    snake.forEach(s=>ctx.fillRect(s.x*S+1,s.y*S+1,S-2,S-2));
+    ctx.fillStyle='#f00';
+    ctx.fillRect(food.x*S+2,food.y*S+2,S-4,S-4);
+  }
+
+  function resume() {
+    paused = false;
+    document.addEventListener('keydown', onKey);
+    gameLoop = requestAnimationFrame(tick);
+  }
+
+  function manuallyPauseGame() {
+    if (dead) return;
+    if (paused) {
+      resume();
+    } else {
+      paused = true;
+      if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
+      document.removeEventListener('keydown', onKey);
+      drawGame();
+      drawPaused();
+    }
+  }
+
+  function onEsc(e) {
+    if (e.key === 'Escape') manuallyPauseGame();
+  }
+  window.addEventListener('keydown', onEsc);
+
+  window._snakePauseResize = () => {
+    if (dead) return;
+    paused = true;
+    if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
+    document.removeEventListener('keydown', onKey);
+    const area = document.getElementById('game-area');
+    const toolbar = area.querySelector('div');
+    canvas.width = area.offsetWidth;
+    canvas.height = area.offsetHeight - (toolbar ? toolbar.offsetHeight : 0);
+    W = canvas.width; H = canvas.height;
+    // clamp food inside new bounds
+    food.x = Math.min(food.x, Math.floor(W/S) - 1);
+    food.y = Math.min(food.y, Math.floor(H/S) - 1);
+    drawGame();
+    drawPaused();
+  };
+
+  canvas.onclick = () => {
+    if (dead) {
+      canvas.onclick = null;
+      window._snakePauseResize = null;
+      window.removeEventListener('keydown', onEsc);
+      startSnake(canvas, ctx);
+      return;
+    }
+    if (paused) resume();
+  };
 
   function onKey(e) {
     if ((e.key==='ArrowUp'||e.key==='w') && dir.y===0) next={x:0,y:-1};
@@ -682,14 +832,20 @@ function startSnake(canvas, ctx) {
 
   let last = 0;
   function tick(ts) {
-    if (dead) { document.removeEventListener('keydown', onKey); return; }
+    if (dead || paused) return;
     gameLoop = requestAnimationFrame(tick);
     if (ts - last < 150) return;
     last = ts;
     dir = next;
     const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
-    if (head.x<0||head.y<0||head.x>=W/S||head.y>=H/S||snake.some(s=>s.x===head.x&&s.y===head.y)) {
+    const hitWall = head.x<0||head.y<0||head.x>=W/S||head.y>=H/S;
+    const tail = snake[snake.length-1];
+    const biteTail = tail && head.x===tail.x && head.y===tail.y;
+    const hitsBody = snake.slice(0,-1).some(s=>s.x===head.x&&s.y===head.y);
+    if (biteTail) unlockAchievement('ouroboros');
+    if (hitWall || hitsBody || biteTail) {
       dead = true;
+      window.removeEventListener('keydown', onEsc);
       ctx.fillStyle='rgba(0,0,0,0.6)';
       ctx.fillRect(0,0,W,H);
       ctx.fillStyle='#f00';
@@ -699,17 +855,14 @@ function startSnake(canvas, ctx) {
       ctx.fillStyle='#fff';
       ctx.font='14px monospace';
       ctx.fillText('Score: '+score,W/2,H/2+28);
+      ctx.fillText('RESTART',W/2,H/2+50);
       document.removeEventListener('keydown', onKey);
       return;
     }
     snake.unshift(head);
     if (head.x===food.x && head.y===food.y) { food=randomFood(); score++; document.getElementById('game-msg').textContent='Score: '+score; }
     else snake.pop();
-    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='#0f0';
-    snake.forEach(s=>ctx.fillRect(s.x*S+1,s.y*S+1,S-2,S-2));
-    ctx.fillStyle='#f00';
-    ctx.fillRect(food.x*S+2,food.y*S+2,S-4,S-4);
+    drawGame();
   }
   gameLoop = requestAnimationFrame(tick);
 }
@@ -719,16 +872,42 @@ function startPong(canvas, ctx) {
   const PAD = {w:8,h:50};
   let p1={y:canvas.height/2-25}, p2={y:canvas.height/2-25};
   let ball={x:canvas.width/2,y:canvas.height/2,vx:2,vy:1.5};
-  let s1=0, s2=0;
+  let s1=0, s2=0, paused=false;
   const keys={};
-  document.getElementById('game-msg').textContent = 'W/S or arrows to move  |  Right paddle is AI';
+  document.getElementById('game-msg').textContent = 'W/S or arrows to move  |  Right paddle is AI  |  ESC to pause';
 
   function onKey(e) { keys[e.key]=e.type==='keydown'; if(['w','s','a','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault(); }
   document.addEventListener('keydown', onKey);
   document.addEventListener('keyup', onKey);
 
+  function drawPaused() {
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle='rgba(0,0,0,0.55)';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#fff';
+    ctx.font='bold 22px monospace';
+    ctx.textAlign='center';
+    ctx.fillText('PAUSED',W/2,H/2-10);
+    ctx.font='14px monospace';
+    ctx.fillText('RESUME',W/2,H/2+18);
+  }
+
+  function onEsc(e) {
+    if (e.key !== 'Escape') return;
+    if (paused) {
+      paused = false;
+      gameLoop = requestAnimationFrame(tick);
+    } else {
+      paused = true;
+      if (gameLoop) { cancelAnimationFrame(gameLoop); gameLoop = null; }
+      drawPaused();
+    }
+  }
+  window.addEventListener('keydown', onEsc);
+
   let last = 0;
   function tick(ts) {
+    if (paused) return;
     const W = canvas.width, H = canvas.height;
     gameLoop = requestAnimationFrame(tick);
     if (ts - last < 1000/60) return;
@@ -758,7 +937,11 @@ function startPong(canvas, ctx) {
   }
   function reset(W,H){ball={x:W/2,y:H/2,vx:ball.vx>0?-2:2,vy:1.5};}
 
-  window._pongCleanup = () => { document.removeEventListener('keydown',onKey); document.removeEventListener('keyup',onKey); };
+  window._pongCleanup = () => {
+    document.removeEventListener('keydown',onKey);
+    document.removeEventListener('keyup',onKey);
+    window.removeEventListener('keydown',onEsc);
+  };
   gameLoop = requestAnimationFrame(tick);
 }
 
@@ -803,7 +986,7 @@ function triggerBSOD() {
     <div style="font-size:1.1rem;margin-bottom:2rem;">A problem has been detected and FLABBSTERR OS has been shut down to prevent damage to your computer.</div>
     <div style="color:#fff;margin-bottom:2rem;">BIN_IN_BIN_EXCEPTION</div>
     <div style="font-size:0.85rem;color:#aaa;">If this is the first time you've seen this Stop error screen, refresh the page. If this screen appears again, follow these steps:</div>
-    <div style="font-size:0.85rem;margin-top:1rem;">Do not put the PC in the bin. Why did you even do that?</div>
+    <div style="font-size:0.85rem;margin-top:1rem;">Why did you even do that?</div>
     <div style="margin-top:3rem;font-size:0.85rem;">Technical information:</div>
     <div style="font-size:0.85rem;">*** STOP: 0x000000BIN (0xB1N0000, 0x00B1N000, 0x0000B1N0, 0x00000B1N)</div>
     <div style="margin-top:3rem;font-size:0.8rem;color:#aaa;">Press any key to restart</div>
@@ -812,6 +995,127 @@ function triggerBSOD() {
   document.addEventListener('keydown', () => location.reload(), { once: true });
   bsod.addEventListener('click', () => location.reload(), { once: true });
 }
+
+// ── Music Player ─────────────────────────────────────────────
+const MP_SONGS = [
+  { title: 'Do For Love', artist: '2Pac ft. Eric Williams', src: 'https://github.com/flabbsterr/coolio/releases/download/music/2Pac.-.Do.For.Love.Official.Music.Video.ft.Eric.Williams.mp3' },
+  { title: 'ALL_URS', artist: 'Alan Vuong', src: 'https://github.com/flabbsterr/coolio/releases/download/music/alan.vuong.-.ALL_URS.Official.Visualizer.mp3' },
+  { title: 'Sunscreen', artist: 'Ax and the Hatchetmen', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Ax.and.the.Hatchetmen.-.Sunscreen.Live.in.Studio.mp3' },
+  { title: 'Honest', artist: 'Baby Keem', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Baby.Keem.-.Honest.Official.Video.mp3' },
+  { title: 'DtMF', artist: 'Bad Bunny', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Bad.Bunny.-.DtMF.Letra.mp3' },
+  { title: 'Akaza', artist: 'Blanco', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Blanco.-.Akaza.Official.Music.Video.mp3' },
+  { title: 'Regime', artist: 'Blanco', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Blanco.-.Regime.Official.Music.Video.mp3' },
+  { title: 'CLOUDED', artist: 'Brent Faiyaz', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Brent.Faiyaz.-.CLOUDED.Official.Audio.mp3' },
+  { title: 'I Really Want to Stay at Your House', artist: 'Rosa Walton & Hallie Coggins', src: 'https://github.com/flabbsterr/coolio/releases/download/music/CYBERPUNK.2077.SOUNDTRACK.-.I.REALLY.WANT.TO.STAY.AT.YOUR.HOUSE.by.Rosa.Walton.Hallie.Coggins.mp3' },
+  { title: 'Let You Down', artist: 'Dawid Podsiadło', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Cyberpunk_.Edgerunners.Ending.Theme._.Let.You.Down.by.Dawid.Podsiado._.Netflix.mp3' },
+  { title: 'Like I Want You', artist: 'GIVON', src: 'https://github.com/flabbsterr/coolio/releases/download/music/GIVON.-.Like.I.Want.You.Official.Audio.mp3' },
+  { title: 'In the Pool', artist: '', src: 'https://github.com/flabbsterr/coolio/releases/download/music/in.the.pool.mp3' },
+  { title: 'YUKON', artist: 'Justin Bieber', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Justin.Bieber.-.YUKON.mp3' },
+  { title: 'Liquid Smooth (Lumatone Version)', artist: '', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Liquid.Smooth.Lumatone.Version.-.super.slowed_dreamy.version.mp3' },
+  { title: 'Loose Cannon', artist: '', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Loose.Cannon.mp3' },
+  { title: '4me 4me', artist: 'Malcolm Todd', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Malcolm.Todd.-.4me.4me.Lyrics.mp3' },
+  { title: 'Gold Teeth', artist: 'Marlon Craft', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Marlon.Craft.-.Gold.Teeth.Official.Music.Video.mp3' },
+  { title: 'RUSSIAN ROULETTE (I ADORE YOU)', artist: 'millkzy', src: 'https://github.com/flabbsterr/coolio/releases/download/music/millkzy-RUSSIAN.ROULETTEI.ADORE.YOU.official.kind.of.sorta.visualizer.mp3' },
+  { title: 'Wonderwall', artist: 'Oasis', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Oasis.-.Wonderwall.Official.Video.mp3' },
+  { title: 'Circles', artist: 'Post Malone', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Post.Malone.-.Circles.mp3' },
+  { title: 'BABY IM BACK', artist: 'The Kid LAROI', src: 'https://github.com/flabbsterr/coolio/releases/download/music/The.Kid.LAROI.-.BABY.IM.BACK.Official.Audio.mp3' },
+  { title: 'Runnin', artist: 'The Pharcyde', src: 'https://github.com/flabbsterr/coolio/releases/download/music/The.Pharcyde.-.Runnin.Official.HD.Music.Video.mp3' },
+  { title: 'Tuna Salad Samba', artist: '', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Tuna.Salad.Samba.mp3' },
+  { title: 'Willing', artist: 'feat. LF SCARZ', src: 'https://github.com/flabbsterr/coolio/releases/download/music/Willing.feat.LF.SCARZ.mp3' },
+];
+
+let mpIndex = 0, mpPlaying = false, mpShuffled = false;
+const mpAudio = new Audio();
+
+mpAudio.addEventListener('timeupdate', () => {
+  const prog = document.getElementById('mp-progress');
+  const cur = document.getElementById('mp-cur');
+  if (!prog || !mpAudio.duration) return;
+  prog.max = Math.floor(mpAudio.duration);
+  prog.value = Math.floor(mpAudio.currentTime);
+  cur.textContent = mpFmt(mpAudio.currentTime);
+});
+
+mpAudio.addEventListener('loadedmetadata', () => {
+  document.getElementById('mp-dur').textContent = mpFmt(mpAudio.duration);
+});
+
+mpAudio.addEventListener('ended', () => mpNext());
+
+document.getElementById('mp-volume').addEventListener('input', function() {
+  mpAudio.volume = this.value / 100;
+});
+
+document.getElementById('mp-progress').addEventListener('input', function() {
+  mpAudio.currentTime = this.value;
+});
+
+function mpFmt(s) {
+  s = Math.floor(s || 0);
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+function mpLoad(index) {
+  if (!MP_SONGS.length) return;
+  mpIndex = (index + MP_SONGS.length) % MP_SONGS.length;
+  const song = MP_SONGS[mpIndex];
+  mpAudio.src = song.src;
+  document.getElementById('mp-title').textContent = song.title;
+  document.getElementById('mp-artist').textContent = song.artist || '';
+  document.getElementById('mp-cur').textContent = '0:00';
+  document.getElementById('mp-dur').textContent = '0:00';
+  document.getElementById('mp-progress').value = 0;
+  document.querySelectorAll('.mp-item').forEach((el, i) => el.classList.toggle('active', i === mpIndex));
+  if (mpPlaying) mpAudio.play();
+}
+
+function mpToggle() {
+  if (!MP_SONGS.length) return;
+  if (!mpAudio.src) mpLoad(0);
+  if (mpPlaying) { mpAudio.pause(); mpPlaying = false; }
+  else { mpAudio.play(); mpPlaying = true; }
+  document.getElementById('mp-playbtn').innerHTML = mpPlaying ? '&#9646;&#9646;' : '&#9654;';
+}
+
+function mpNext() {
+  mpPlaying = true;
+  if (mpShuffled) { mpLoad(Math.floor(Math.random() * MP_SONGS.length)); }
+  else { mpLoad(mpIndex + 1); }
+}
+function mpPrev() { mpPlaying = true; mpLoad(mpIndex - 1); }
+
+function mpShuffle() {
+  mpShuffled = !mpShuffled;
+  document.getElementById('mp-shufflebtn').classList.toggle('active', mpShuffled);
+}
+
+function mpInitList() {
+  const list = document.getElementById('mp-list');
+  list.innerHTML = '';
+  if (!MP_SONGS.length) {
+    list.innerHTML = '<div style="padding:1rem;color:#666;font-size:0.8rem;text-align:center;">No songs added yet</div>';
+    return;
+  }
+  MP_SONGS.forEach((song, i) => {
+    const div = document.createElement('div');
+    div.className = 'mp-item' + (i === mpIndex ? ' active' : '');
+    div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+    const name = document.createElement('span');
+    name.style.cssText = 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;';
+    name.textContent = (song.artist ? song.artist + ' - ' : '') + song.title;
+    const dur = document.createElement('span');
+    dur.style.cssText = 'font-size:0.7rem;color:#888;flex-shrink:0;margin-left:0.5rem;';
+    dur.textContent = '—:——';
+    const tmp = new Audio();
+    tmp.src = song.src;
+    tmp.addEventListener('loadedmetadata', () => { dur.textContent = mpFmt(tmp.duration); });
+    div.appendChild(name);
+    div.appendChild(dur);
+    div.onclick = () => { mpPlaying = true; mpLoad(i); document.getElementById('mp-playbtn').innerHTML = '&#9646;&#9646;'; };
+    list.appendChild(div);
+  });
+}
+mpInitList();
 
 // ── Scanline overlay
 const canvas = document.getElementById('static-canvas');
@@ -877,14 +1181,14 @@ const dadJokes = [
   "Why don't scientists trust atoms? Because they make up everything.",
   "Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them.",
   "Someone said he was hungry, I said 'Hi Hungry, I'm Flabbsterr!', and then they said who are you, how did you get in my house? I Dunno, I was just trying to make a joke.",
-  "Someone lost their lost their arm in an accident, I asked if they're alright, they said they're all left! Was that how the joke went? I don't know, I wasn't there.",
+  "Someone lost their arm in an accident, I asked if they're alright, they said they're all left! Was that how the joke went? I don't know, he bled out.",
   "I got a joke, uhhhhhhh uhhhhhhhhhhhhhhhhh i forgot sorry",
   "Did you hear the cheese factory that exploded? There was nothing left but de-brie.",
   "I used to play piano by ear, but now I use my hands.",
   "Why did the bicycle fall over? Because it was two-tired.",
   "I told my wife she was drawing her eyebrows too high. She looked surprised.",
   "Why did the tomato turn red? Because it saw the salad dressing.",
-  "I would tell you a construction joke, but I'm still working on it. Its gonna be finished when rell seas drops.",
+  "I would tell you a construction joke, but I'm still working on it. Its gonna be finished when half life 3 drops.",
   "Where does Darth Vader shop to get his sneakers? At the Darth Maul.",
   "Where does Darth Maul shoes to get his shoes? At the Darth Vader. what?",
   "Ridwan told me not to make a joke about his name, but I think it would be very Ridwan-iculous if I didn't.",
@@ -909,6 +1213,16 @@ const dadJokes = [
   "What do you call a fish with a bowtie? Sofishticated.",
   "Three blondes walk into a bar, you think the other two would have seen it!"
 ];
+
+// Konami Code
+(function() {
+  const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let ki = 0;
+  document.addEventListener('keydown', function(e) {
+    if (e.key === KONAMI[ki]) { ki++; if (ki === KONAMI.length) { unlockAchievement('konami_code'); ki = 0; } }
+    else ki = e.key === KONAMI[0] ? 1 : 0;
+  });
+})();
 
 document.addEventListener('keydown', function onDel(e) {
   const popup = document.getElementById('del-popup');
@@ -1063,17 +1377,16 @@ function finish() {
         e.stopPropagation();
         const startX = e.clientX, startY = e.clientY;
         const startW = w.offsetWidth, startH = w.offsetHeight;
+        const content = w.querySelector('.window-content');
         document.body.style.userSelect = 'none';
-        const shield = document.createElement('div');
-        shield.style.cssText = 'position:fixed;inset:0;z-index:9999;';
-        document.body.appendChild(shield);
+        if (content) content.style.pointerEvents = 'none';
         function onMove(e) {
-          w.style.width = Math.max(200, startW + e.clientX - startX) + 'px';
-          w.style.height = Math.max(100, startH + e.clientY - startY) + 'px';
+          w.style.width = Math.max(300, startW + e.clientX - startX) + 'px';
+          w.style.height = Math.max(225, startH + e.clientY - startY) + 'px';
         }
         function onUp() {
           document.body.style.userSelect = '';
-          shield.remove();
+          if (content) content.style.pointerEvents = '';
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup', onUp);
         }

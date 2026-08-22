@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Retro Boot Sequence</title>
+    <link rel="icon" href="assets/icons/tabIcon.png">
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -73,12 +74,12 @@
         </div>
       </div>
 
-      <div id="welcome-window" class="window">
+      <div id="welcome-window" class="window" style="height:300px;width:610px;display:flex;flex-direction:column;">
         <div class="window-titlebar">
           <span>Welcome</span>
           <button onclick="closeWindow('welcome-window')">x</button>
         </div>
-        <div class="window-content">
+        <div class="window-content" style="overflow-y:auto;position:relative;flex:1;min-height:0;">
           <div class="welcome-inner">
             <div>
               <h1>Welcome to my retro (?) page</h1>
@@ -86,6 +87,20 @@
               <p>If you have any cool suggestions please lmk.</p>
               <p>This page uses HTML, plain JavaScript, and CSS.</p>
               <p style="font-size:0.8rem;color:#555;">Note: Theres some cool stuff I've added (or atleast I think so), try unlocking all achievements</p>
+              <p style="font-size:0.8rem;color:#555;">Scroll Down For Changelogs</p>
+              <hr style="border:none;border-top:1px solid #ccc;margin:0.8rem 0;">
+              <div style="font-size:0.8rem;font-weight:bold;margin-bottom:0.4rem;color:#333;">Changelog</div>
+              <div style="font-size:0.75rem;color:#444;line-height:1.8;">
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.6</span> &mdash; Snake/Pong pause with ESC, resize no longer restarts snake, THE NET homepage fix, reverted custom cursor for compatibility</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.5</span> &mdash; More dad jokes, gold taskbar reward for 100% achievements, misc bug fixes</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.4</span> &mdash; New achievements, bug fixes, window scaling fix</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.3.1</span> &mdash; i love these messages cuz i never put actual ones most the time</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.3</span> &mdash; Profile page redesign</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.2</span> &mdash; Icons, achievements, more portfolio content</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.1</span> &mdash; Windows can't be dragged off screen, internet window remade</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v1.0</span> &mdash; Spotify, start menu, GitHub redirect, snake &amp; pong minigames</div>
+                <div><span style="color:#0a4ea1;font-weight:bold;">v0.1</span> &mdash; Framework, boot sequence, base desktop outline</div>
+              </div>
             </div>
             <pre class="welcome-ascii">         __
         / /\
@@ -146,13 +161,13 @@
       </div>
 
 
-      <div id="notepad-window" class="window secondary-window" style="display:none;top:15%;left:30%;width:420px;">
+      <div id="notepad-window" class="window secondary-window" style="display:none;top:15%;left:30%;width:420px;height:340px;">
         <div class="window-titlebar">
           <span>Notepad</span>
           <button onclick="closeWindow('notepad-window')">x</button>
         </div>
         <div class="window-content" style="padding:0;">
-          <textarea id="notepad-text" style="width:100%;height:280px;border:none;outline:none;resize:none;font-family:'Courier New',monospace;font-size:0.85rem;padding:0.8rem;background:#fff;color:#000;"></textarea>
+          <textarea id="notepad-text" style="width:100%;flex:1;min-height:0;border:none;outline:none;resize:none;font-family:'Courier New',monospace;font-size:0.85rem;padding:0.8rem;background:#fff;color:#000;display:block;"></textarea>
         </div>
       </div>
 
@@ -171,28 +186,47 @@
           </div>
           <div class="user-profile-body">
             <div class="user-section-label">intro</div>
-            <div class="user-section-text">I'm a software engineer sometimes make projects like these. I enjoy working with various technologies and always strive to improve my skills. (currently learning about LLMs)</div>
+            <div class="user-section-text">I'm a software/devops engineer, sometimes make projects like these. I enjoy working with various technologies and always strive to improve my skills. (currently learning about LLMs)</div>
             <div class="user-section-label">interests</div>
             <div class="user-section-text">cats, music, coding, playing games (currently on cyberpunk), basketball, volleyball and other stuff</div>
             <div class="user-section-label">songs of choice</div>
-            <div class="user-section-text">RUSSIAN ROULETTE(I ADORE U) - millkzy<br>Keep Steady - Sosocamo<br>ALL_URS - Alan Vong<br><span style="font-size:0.75rem;color:#888;">(if i put bunii, will i be niche)</span></div>
+            <div class="user-section-text">RUSSIAN ROULETTE(I ADORE U) - millkzy<br>Ponzi Scheme - Blanco<br>ALL_URS - Alan Vong<br><span style="font-size:0.75rem;color:#888;">(if i put bunii, will i be niche)</span></div>
             <div class="user-section-label">form of contact</div>
             <div class="user-section-text">Discord: <b>flabbsterr</b></div>
           </div>
           <div class="user-profile-footer">
-            <div>visitors: <b id="visit-count">...</b></div>
+            <div>visitors: <b id="visit-count">ts dont work bro</b></div>
             <div>&copy; 2026 &bull; don't @ me when im rich &bull; im goated btw </div>
           </div>
         </div>
       </div>
 
-      <div id="spotify-window" class="window secondary-window" style="display:none;top:10%;left:30%;width:340px;height:400px;overflow:hidden;">
+      <div id="spotify-window" class="window secondary-window" style="display:none;top:10%;left:30%;width:420px;height:375px;flex-direction:column;">
         <div class="window-titlebar">
-          <span>Spotify</span>
+          <span>Music Player</span>
           <button onclick="closeWindow('spotify-window')">x</button>
         </div>
-        <div class="window-content" style="padding:0;flex:1;overflow:hidden;">
-          <iframe style="border-radius:0;display:block;width:100%;height:100%;" src="https://open.spotify.com/embed/playlist/2qByh7BRjevxTztgLor2EY?utm_source=generator&si=093b0817ebc5472e" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <div class="window-content mp-wrap" style="padding:0;flex:1;display:flex;flex-direction:column;overflow:hidden;">
+          <div class="mp-now">
+            <div class="mp-title" id="mp-title">No track selected</div>
+            <div class="mp-artist" id="mp-artist"></div>
+          </div>
+          <div class="mp-progress-wrap">
+            <span class="mp-time" id="mp-cur">0:00</span>
+            <input type="range" class="mp-progress" id="mp-progress" value="0" min="0" step="1">
+            <span class="mp-time" id="mp-dur">0:00</span>
+          </div>
+          <div class="mp-controls">
+            <button onclick="mpPrev()">&#9664;&#9664;</button>
+            <button id="mp-playbtn" onclick="mpToggle()">&#9654;</button>
+            <button onclick="mpNext()">&#9654;&#9654;</button>
+          </div>
+          <div class="mp-volume-wrap">
+            <span class="mp-time">vol</span>
+            <input type="range" class="mp-progress mp-volume-bar" id="mp-volume" value="100" min="0" max="100" step="1">
+            <button onclick="mpShuffle()" id="mp-shufflebtn" title="Shuffle">&#8635;</button>
+          </div>
+          <div class="mp-list" id="mp-list"></div>
         </div>
       </div>
 
@@ -215,14 +249,14 @@
         </div>
       </div>
 
-      <div id="internet-window" class="window secondary-window" style="display:none;top:5%;left:15%;width:600px;">
+      <div id="internet-window" class="window secondary-window" style="display:none;top:5%;left:15%;width:600px;height:500px;flex-direction:column;">
         <div class="window-titlebar">
           <span>Internet</span>
           <button onclick="closeWindow('internet-window')">x</button>
         </div>
-        <div class="window-content" id="internet-content" style="padding:0;">
-          <div id="game-picker" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;background:#ece9d8;padding:2rem;">
-            <div style="font-size:2.2rem;font-weight:bold;letter-spacing:0.1em;margin-bottom:0.2rem;color:#333;">FLABB<span style="color:#0a4ea1;">NET</span></div>
+        <div class="window-content" id="internet-content" style="padding:0;flex:1;min-height:0;display:flex;flex-direction:column;">
+          <div id="game-picker" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:420px;background:#ece9d8;padding:2rem;">
+            <div style="font-size:2.2rem;font-weight:bold;letter-spacing:0.1em;margin-bottom:0.2rem;color:#333;">THE<span style="color:#0a4ea1;">NET</span></div>
             <div style="font-size:0.7rem;color:#888;margin-bottom:2.5rem;">Your Internet Homepage</div>
             <div style="display:flex;gap:2rem;">
               <div class="game-tile" onclick="loadGame('snake')">
@@ -235,12 +269,12 @@
               </div>
             </div>
           </div>
-          <div id="game-area" style="display:none;flex-direction:column;">
+          <div id="game-area" style="display:none;flex-direction:column;flex:1;min-height:0;">
             <div style="background:#ddd;padding:0.3rem 0.6rem;display:flex;align-items:center;gap:0.6rem;border-bottom:1px solid #bbb;">
               <button onclick="backToGames()" style="cursor:pointer;font-size:0.75rem;padding:0.15rem 0.5rem;">&#8592; Home</button>
               <span id="game-title" style="font-size:0.8rem;color:#555;"></span>
             </div>
-            <canvas id="game-canvas" style="display:block;background:#000;width:100%;height:auto;"></canvas>
+            <canvas id="game-canvas" style="display:block;background:#000;width:100%;flex:1;min-height:0;"></canvas>
             <div id="game-msg" style="font-size:0.8rem;color:#555;padding:0.3rem 0.6rem;background:#e8e8e8;border-top:1px solid #ccc;text-align:center;"></div>
           </div>
         </div>
@@ -252,6 +286,25 @@
           <button onclick="closeWindow('achievements-window')">x</button>
         </div>
         <div class="window-content" id="achievements-list" style="max-height:60vh;overflow-y:auto;padding:0.8rem;"></div>
+        <div style="padding:0.5rem 0.8rem;border-top:1px solid #ccc;background:#ece9d8;text-align:right;">
+          <button onclick="promptResetAchievements()" style="font-size:0.75rem;padding:0.2rem 0.6rem;cursor:pointer;background:linear-gradient(180deg,#e8e0d0,#c8b898);border:1px solid #888;color:#000;">Reset Achievements</button>
+        </div>
+      </div>
+
+      <div id="reset-confirm" style="display:none;position:fixed;inset:0;z-index:9999998;display:none;align-items:center;justify-content:center;">
+        <div style="background:#ece9d8;border:2px solid #3b3b3b;box-shadow:8px 8px 0 rgba(0,0,0,0.25);width:320px;overflow:hidden;">
+          <div style="background:linear-gradient(90deg,#0a4ea1,#2f77d0);color:#fff;padding:0.4rem 0.6rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>Confirm Reset</span>
+            <button onclick="document.getElementById('reset-confirm').style.display='none'" style="background:transparent;border:none;color:#fff;font-size:1rem;cursor:pointer;">x</button>
+          </div>
+          <div style="padding:1rem 1.2rem;font-size:0.85rem;color:#000;">
+            <p style="margin:0 0 1rem;">Are you sure you want to reset all achievements? This cannot be undone.</p>
+            <div style="display:flex;justify-content:flex-end;gap:0.5rem;">
+              <button onclick="document.getElementById('reset-confirm').style.display='none'" style="font-size:0.8rem;padding:0.25rem 0.8rem;cursor:pointer;background:linear-gradient(180deg,#e8e0d0,#c8b898);border:1px solid #888;color:#000;">Cancel</button>
+              <button onclick="confirmResetAchievements()" style="font-size:0.8rem;padding:0.25rem 0.8rem;cursor:pointer;background:linear-gradient(180deg,#cc3333,#991111);border:1px solid #660000;color:#fff;">Reset</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="clock-popup" style="display:none;" onclick="event.stopPropagation()">
@@ -295,7 +348,7 @@
             </a>
             <div class="start-menu-item" onclick="openWindow('spotify-window');toggleStartMenu()">
               <div class="start-menu-icon spotify"></div>
-              <span>My Playlist</span>
+              <span>Music Player</span>
             </div>
           </div>
         </div>

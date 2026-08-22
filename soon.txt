@@ -1,0 +1,25 @@
+things to add:
+MAYBE add a way for people to give improvments / things they want added through the website, connected to a discord bot which messages me with what was said
+
+things to change:
+remove spotify API as it may be banned for them locally, instead ill upload music to github and make it playable from the tab itself
+
+Things to fix:
+fix the api which counts how many users visit the website
+
+what i've finished:
+changelog (try see if i can connect it to the github logs i push, i'll see if adding the dates for each push is better or the version or both)
+change flab net name to THE NET
+fixing the flabnet
+added a pause system for the game 
+removed the cyberpysco achivment as it diddnt make sense and replaced it with a new achivment relating to the snake game 
+fixed the notepad 
+replaced shield div (was blocking textarea focus) with pointerEvents:'none' on .window-content during resize only for the snake game, now pauses and doesnt reset the game 
+added a restart feature for the snake game 
+Add an achivment that you get if you do the The Konami Code named "REF HES CHEATING"
+improve achivvment unlocking tab thing at the top wtver its called
+MAYBE add a way to reset achivments
+add more wallpapers
+more achviments 
+achivment images 
+add more rewards for achivments
