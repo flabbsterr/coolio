@@ -223,6 +223,14 @@ function renderAchievements() {
   const list = document.getElementById('achievements-list');
   if (!list) return;
   list.innerHTML = '';
+  const unlocked = ACHIEVEMENTS.filter(a => data[a.id]).length;
+  const pct = Math.round((unlocked / ACHIEVEMENTS.length) * 100);
+  const pctEl = document.getElementById('ach-percent');
+  if (pctEl) {
+    pctEl.textContent = pct + '%';
+    pctEl.style.color = pct === 100 ? '#c8960a' : '#555';
+    pctEl.style.textShadow = pct === 100 ? '0 0 6px #ffe066' : 'none';
+  }
   ACHIEVEMENTS.forEach(a => {
     const unlocked = !!data[a.id];
     const div = document.createElement('div');
@@ -371,7 +379,7 @@ function showHourglass() {
 function openWindow(id) {
   showHourglass();
   const w = document.getElementById(id);
-  w.style.display = id === 'spotify-window' || id === 'notepad-window' || id === 'internet-window' ? 'flex' : 'block';
+  w.style.display = id === 'spotify-window' || id === 'notepad-window' || id === 'internet-window' || id === 'achievements-window' ? 'flex' : 'block';
   bringToFront(w);
   removeTaskbarTab(id);
   if (id === 'computer-window') populateSysInfo();

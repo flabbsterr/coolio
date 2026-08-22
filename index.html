@@ -282,13 +282,14 @@
         </div>
       </div>
 
-      <div id="achievements-window" class="window secondary-window" style="display:none;top:10%;left:20%;width:400px;">
+      <div id="achievements-window" class="window secondary-window" style="display:none;top:10%;left:20%;width:400px;height:400px;flex-direction:column;">
         <div class="window-titlebar">
           <span>Achievements</span>
           <button onclick="closeWindow('achievements-window')">x</button>
         </div>
-        <div class="window-content" id="achievements-list" style="max-height:60vh;overflow-y:auto;padding:0.8rem;"></div>
-        <div style="padding:0.5rem 0.8rem;border-top:1px solid #ccc;background:#ece9d8;text-align:right;">
+        <div class="window-content" id="achievements-list" style="flex:1;min-height:0;overflow-y:auto;padding:0.8rem;"></div>
+        <div style="padding:0.5rem 0.8rem;border-top:1px solid #ccc;background:#ece9d8;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+          <span id="ach-percent" style="font-size:0.75rem;font-weight:bold;color:#555;">0%</span>
           <button onclick="promptResetAchievements()" style="font-size:0.75rem;padding:0.2rem 0.6rem;cursor:pointer;background:linear-gradient(180deg,#e8e0d0,#c8b898);border:1px solid #888;color:#000;">Reset Achievements</button>
         </div>
       </div>
